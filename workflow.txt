@@ -1,0 +1,20 @@
+----lấy code về
+--- Tạo thư mục muốn lưu dự án (VD: E:\JAVA_PICKHUB)
+-- Vào InteliJ, tại mục terminal (Thanh menu dưới cùng)
+--chạy lệnh
+- E: -> enter
+- cd E:\JAVA_PICKHUB) -> enter
+- git clone https://github.com/anhdqth07275-cmd/pickhub.git -> enter
+- cd pickhub -> enter
+
+-----Quy trình
+1. Lấy code về
+-- Vào Terminal trên InteliJ
+- git pull origin main
+2. Commit
+- git status
+- git add .
+- git commit -m "Nội dung ghi chú công việc vừa làm"
+3. Đẩy code lên
+- git pull origin main //Chạy lại lệnh git pull một lần nữa để đảm bảo không bị lệch code với người khác:
+- git push origin main
