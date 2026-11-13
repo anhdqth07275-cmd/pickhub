@@ -40,7 +40,6 @@ public class HibernateConfig {
         */
         conf.addAnnotatedClass(HoaDon.class);//sua khi xay ra loi san pham is not map
         conf.addAnnotatedClass(HoaDonChiTiet.class);//khai báo thêm entity ChiTietSP
-        conf.addAnnotatedClass(ChuongTrinhKhuyenMai.class);
         conf.setProperties(properties);
         ServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .applySettings(conf.getProperties()).build();
