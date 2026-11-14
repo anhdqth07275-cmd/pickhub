@@ -3,8 +3,7 @@ package util;
 
 
 
-import entity.HoaDon;
-import entity.HoaDonChiTiet;
+import entity.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;

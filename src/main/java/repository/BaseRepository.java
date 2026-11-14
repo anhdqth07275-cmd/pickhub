@@ -129,4 +129,10 @@ public class BaseRepository<T> {
     public void capNhat(final T doiTuong) {
         GiaoDich.chay(s -> { s.merge(doiTuong); return null; });
     }
+    // note code nhu nay nhe ban: lay cac dong HOAT_DONG de do vao dropdown (ap dung cho bang co cot trangThai: ThuongHieu, DanhMuc, MauSac, KhoiLuong, ChatLieu, ChuViTayCam)
+    public List<T> layDangHoatDong() {
+        try (Session s = moSession()) {
+            return s.createQuery("from " + lop.getSimpleName() + " x where x.trangThai = 'HOAT_DONG' order by x." + tenId + " asc", lop).list();
+        }
+    }
 }
