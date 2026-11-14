@@ -45,3 +45,34 @@ Tìm trong code: `note code nhu nay nhe ban` = ghi chú nghiệp vụ; `TODO` = 
 - Mã chưa build được trong môi trường của mình (không có Maven Central) → lần đầu chạy nếu IntelliJ báo lỗi, gửi lại log để sửa.
 - Dữ liệu mẫu có ngày hiện tại là 11/11/2026 nên biểu đồ "7 ngày" ít cột; bấm tab "6 tháng" để thấy rõ doanh thu.
 - `HibernateConfig` vẫn chứa mật khẩu `sa` (đã đẩy lên GitHub) → nên đổi mật khẩu và đưa ra `db.properties`.
+
+
+---
+# M5 – Giỏ hàng & Đặt hàng (phía khách)
+
+## Thử nhanh
+1. Mở `/cua-hang` (trang demo liệt kê biến thể đang bán) → bấm **Thêm vào giỏ** (AJAX). Chưa đăng nhập sẽ chuyển sang `/dang-nhap` rồi quay lại và **vẫn thêm sản phẩm đã chọn**.
+2. Tài khoản khách mẫu: `tuankiet.do@example.com` / `PickHub@123` (khách này có sẵn giỏ hàng trong dữ liệu mẫu).
+3. `/gio-hang`: sửa số lượng, xóa dòng, xóa giỏ, áp / bỏ mã giảm giá → `/dat-hang` nhập địa chỉ → `/dat-hang/thanh-cong`.
+4. Vào `/wp-admin/don-hang` thấy đơn mới ở trạng thái *Chờ xác nhận*; `/wp-admin/ton-kho` thấy tồn đã giảm.
+
+Mã để thử: `PICKHUB10` (10%, tối đa 300.000, đơn từ 1.000.000), `VIP5` (5%), `WELCOME50K`.
+`DOUBLE11` đã hết hạn (13/11) nên sẽ báo "đã hết hạn" – dùng để thử trường hợp từ chối.
+Dữ liệu mẫu có khuyến mãi đã qua hạn nên giỏ mẫu sẽ hiện cảnh báo **"Giá ... đã thay đổi"** (đúng chức năng làm mới giá).
+
+## Bản đồ M5
+| Việc | File |
+|---|---|
+| Giỏ hàng = HoaDon `GIO_HANG` (thêm, sửa SL, xóa dòng, cộng dồn, không vượt tồn) | `service/GioHangService`, `controller/GioHangServlet`, `controller/ApiGioHangServlet` |
+| Chốt giá (donGiaGoc, donGia, mã khuyến mãi) và làm mới giá | `GioHangService.lamMoiGia`, `service/KhuyenMaiService.tinhGia` (giá thấp nhất, không cộng dồn) |
+| Áp phiếu giảm giá, tính tamTinh / soTienGiam / tongTien | `service/PhieuGiamGiaService`, `GioHangService.tinhLaiTong` |
+| Đặt hàng 1 transaction: kiểm tra lại → trừ tồn (UPDATE có điều kiện) → tăng lượt KM → ghi phiếu → sinh maTraCuu → CHO_XAC_NHAN → ghi lịch sử | `service/DatHangService`, `service/SuDungPhieuService`, `service/MaTraCuuGenerator`, `controller/DatHangServlet` |
+| Bắt buộc đăng nhập khách | `filter/KhachHangFilter`, `controller/DangNhapKhachServlet` |
+| Giao diện | `webapp/trang-chu-khach/*.jsp`, `webapp/assets/cua-hang.css` |
+
+Đối chiếu số liệu: biến thể 1 giảm 15% = 4.156.500đ; đơn 4.926.600đ + DOUBLE11 (11%, tối đa 600.000) = 541.926đ.
+
+## Còn lại (TODO)
+- Gửi email xác nhận đơn (MailUtil) – `DatHangService.datHang`.
+- Khách xem "Đơn hàng của tôi" / hủy đơn + hoàn tồn, hoàn lượt khuyến mãi, hoàn phiếu (`SuDungPhieuService.hoanLai`) – module M6/M7.
+- `/cua-hang` chỉ là trang demo; storefront đầy đủ thuộc M3. Đăng ký / quên mật khẩu khách thuộc M2.

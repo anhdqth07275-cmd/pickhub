@@ -1,6 +1,8 @@
 package controller;
 
+import dto.KhachHangDangNhap;
 import dto.TaiKhoanDangNhap;
+import service.GioHangService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +18,8 @@ public abstract class BaseServlet extends HttpServlet {
 
     // Thu muc chua JSP cua backend
     private static final String THU_MUC_VIEW = "/trang-chu-backend/";
+    // Thu muc chua JSP cua trang khach (cua hang, gio hang, dat hang)
+    private static final String THU_MUC_KHACH = "/trang-chu-khach/";
 
     /**
      * Mo 1 trang JSP.
@@ -24,6 +28,19 @@ public abstract class BaseServlet extends HttpServlet {
      * tieuDe : tieu de lon cua trang
      */
     protected void hienThi(HttpServletRequest req, HttpServletResponse resp, String view, String menu, String tieuDe)
+            throws ServletException, IOException {
+        chuyenTiepJsp(req, resp, THU_MUC_VIEW, view, menu, tieuDe);
+    }
+
+    /** Nhu hienThi nhung cho trang KHACH (JSP nam trong /trang-chu-khach/). Tu dong gan so luong tren icon gio hang. */
+    protected void hienThiKhach(HttpServletRequest req, HttpServletResponse resp, String view, String menu, String tieuDe)
+            throws ServletException, IOException {
+        KhachHangDangNhap kh = khachHang(req);
+        if (kh != null) req.setAttribute("soLuongGio", new GioHangService().demSoLuong(kh.getId()));
+        chuyenTiepJsp(req, resp, THU_MUC_KHACH, view, menu, tieuDe);
+    }
+
+    private void chuyenTiepJsp(HttpServletRequest req, HttpServletResponse resp, String thuMuc, String view, String menu, String tieuDe)
             throws ServletException, IOException {
         req.setAttribute("menu", menu);
         req.setAttribute("tieuDe", tieuDe);
@@ -36,7 +53,7 @@ public abstract class BaseServlet extends HttpServlet {
             session.removeAttribute("flashNoiDung");
             session.removeAttribute("flashLoai");
         }
-        req.getRequestDispatcher(THU_MUC_VIEW + view + ".jsp").forward(req, resp);
+        req.getRequestDispatcher(thuMuc + view + ".jsp").forward(req, resp);
     }
 
     /** Sau khi POST thanh cong: luu thong bao roi redirect (mau Post-Redirect-Get). */
@@ -84,5 +101,11 @@ public abstract class BaseServlet extends HttpServlet {
     protected TaiKhoanDangNhap taiKhoan(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
         return session == null ? null : (TaiKhoanDangNhap) session.getAttribute("taiKhoan");
+    }
+
+    /** Khach hang dang dang nhap (null neu chua dang nhap). */
+    protected KhachHangDangNhap khachHang(HttpServletRequest req) {
+        HttpSession session = req.getSession(false);
+        return session == null ? null : (KhachHangDangNhap) session.getAttribute("khachHang");
     }
 }
