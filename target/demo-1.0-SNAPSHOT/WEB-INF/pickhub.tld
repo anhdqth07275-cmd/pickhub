@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="https://jakarta.ee/xml/ns/jakartaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-jsptaglibrary_3_0.xsd"
+        version="3.0">
+    <description>Ham dinh dang dung trong JSP cua PickHub</description>
+    <tlib-version>1.0</tlib-version>
+    <short-name>ph</short-name>
+    <uri>http://pickhub.vn/functions</uri>
+
+    <function>
+        <name>tien</name>
+        <function-class>util.DinhDangUtil</function-class>
+        <function-signature>java.lang.String tien(java.lang.Object)</function-signature>
+    </function>
+    <function>
+        <name>trieu</name>
+        <function-class>util.DinhDangUtil</function-class>
+        <function-signature>java.lang.String trieu(java.lang.Object)</function-signature>
+    </function>
+    <function>
+        <name>ngayGio</name>
+        <function-class>util.DinhDangUtil</function-class>
+        <function-signature>java.lang.String ngayGio(java.lang.Object)</function-signature>
+    </function>
+    <function>
+        <name>ngay</name>
+        <function-class>util.DinhDangUtil</function-class>
+        <function-signature>java.lang.String ngay(java.lang.Object)</function-signature>
+    </function>
+    <function>
+        <name>nhan</name>
+        <function-class>util.DinhDangUtil</function-class>
+        <function-signature>java.lang.String nhan(java.lang.String)</function-signature>
+    </function>
+    <function>
+        <name>giamGia</name>
+        <function-class>util.DinhDangUtil</function-class>
+        <function-signature>java.lang.String giamGia(java.lang.String, java.lang.Object)</function-signature>
+    </function>
+</taglib>

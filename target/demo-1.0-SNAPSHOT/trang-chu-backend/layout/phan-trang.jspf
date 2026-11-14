@@ -1,0 +1,17 @@
+<%-- Thanh phan trang dung chung. Can request attribute: pt (PhanTrang) va duongDan (vd /wp-admin/san-pham) --%>
+<c:if test="${pt.tongTrang > 1}">
+    <div class="pager">
+        <span>Trang ${pt.trangHienTai}/${pt.tongTrang} · ${pt.tongSo} dòng</span>
+        <c:forEach begin="1" end="${pt.tongTrang}" var="i">
+            <%-- note code nhu nay nhe ban: giu nguyen tu khoa tim kiem / bo loc khi chuyen trang --%>
+            <c:url var="lienKet" value="${duongDan}">
+                <c:param name="trang" value="${i}"/>
+                <c:param name="tuKhoa" value="${param.tuKhoa}"/>
+                <c:param name="trangThai" value="${param.trangThai}"/>
+                <c:param name="loai" value="${param.loai}"/>
+                <c:param name="canhBao" value="${param.canhBao}"/>
+            </c:url>
+            <a class="${i == pt.trangHienTai ? 'on' : ''}" href="${lienKet}">${i}</a>
+        </c:forEach>
+    </div>
+</c:if>

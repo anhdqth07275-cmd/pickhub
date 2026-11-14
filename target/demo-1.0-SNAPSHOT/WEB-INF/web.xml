@@ -3,4 +3,32 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
          version="5.0">
+
+    <!-- note code nhu nay nhe ban: ep Tomcat doc moi file JSP / JSPF bang UTF-8 (khong co dong nay thi chu Viet bi loi font) -->
+    <jsp-config>
+        <jsp-property-group>
+            <url-pattern>*.jsp</url-pattern>
+            <url-pattern>*.jspf</url-pattern>
+            <page-encoding>UTF-8</page-encoding>
+        </jsp-property-group>
+    </jsp-config>
+
+    <!-- Het phien lam viec sau 30 phut -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+    <!-- Trang loi (nam trong WEB-INF nen chi hien qua error-page) -->
+    <error-page>
+        <error-code>403</error-code>
+        <location>/trang-chu-backend/error/403.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/trang-chu-backend/error/404.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/trang-chu-backend/error/500.jsp</location>
+    </error-page>
 </web-app>

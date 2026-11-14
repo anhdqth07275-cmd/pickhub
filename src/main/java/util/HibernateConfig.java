@@ -3,8 +3,7 @@ package util;
 
 
 
-import entity.HoaDon;
-import entity.HoaDonChiTiet;
+import entity.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -38,8 +37,16 @@ public class HibernateConfig {
             - Khai báo cho Hibernate biết các Class nào trong Java sẽ được ánh xạ xuống database
             - Khi ứng dụng chạy, Hibernate sẽ quét các class xxx1 và xxx2 (thường có annotation @Entity) để quản lý chúng.
         */
-        conf.addAnnotatedClass(HoaDon.class);//sua khi xay ra loi san pham is not map
-        conf.addAnnotatedClass(HoaDonChiTiet.class);//khai báo thêm entity ChiTietSP
+        // note code nhu nay nhe ban: dang ky du 18 entity, thieu 1 cai la loi "X is not mapped"
+        Class<?>[] cacEntity = {
+                ThuongHieu.class, DanhMuc.class, MauSac.class, ChuViTayCam.class, KhoiLuong.class, ChatLieu.class,
+                NhanVien.class, KhachHang.class, SanPham.class, ChiTietSanPham.class, HinhAnhSanPham.class,
+                ChuongTrinhKhuyenMai.class, ChiTietChuongTrinhKhuyenMai.class, PhieuGiamGia.class,
+                HoaDon.class, HoaDonChiTiet.class, LichSuTrangThaiHoaDon.class, SuDungPhieuGiamGia.class
+        };
+        for (Class<?> c : cacEntity) {
+            conf.addAnnotatedClass(c);
+        }
         conf.setProperties(properties);
         ServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .applySettings(conf.getProperties()).build();

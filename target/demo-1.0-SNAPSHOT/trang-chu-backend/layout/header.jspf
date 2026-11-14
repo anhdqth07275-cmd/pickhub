@@ -1,0 +1,94 @@
+<%-- Khung chung phan DAU cua moi trang backend: sidebar + mo the <main>. Moi JSP bat dau bang dong include header nay. --%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<%@ taglib prefix="ph" uri="http://pickhub.vn/functions" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<c:set var="laNhanVien" value="${sessionScope.taiKhoan.vaiTro == 'NHAN_VIEN'}"/>
+<%-- note code nhu nay nhe ban: nhom menu nao chua trang hien tai thi mo san (open) --%>
+<c:set var="moNhomSP" value="${fn:contains('san-pham,ton-kho,danh-muc,thuong-hieu,thuoc-tinh', menu)}"/>
+<c:set var="moNhomGiamGia" value="${fn:contains('khuyen-mai,phieu-giam-gia', menu)}"/>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>${tieuDe} - PickHub Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="${ctx}/assets/admin.css">
+</head>
+<body>
+<aside class="sidebar">
+    <a class="logo" href="${ctx}/wp-admin">PICK<span>HUB</span></a>
+
+    <a class="nav-item ${menu == 'dashboard' ? 'active' : ''}" href="${ctx}/wp-admin">
+        <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        Dashboard</a>
+
+    <a class="nav-item ${menu == 'tai-quay' ? 'active' : ''}" href="${ctx}/wp-admin/ban-hang-tai-quay">
+        <svg class="ic" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+        Bán hàng tại quầy <span class="soon-tag">Sắp ra mắt</span></a>
+
+    <details class="nav-group" ${moNhomSP ? 'open' : ''}>
+        <summary>
+            <svg class="ic" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+            Quản lý sản phẩm</summary>
+        <div class="nav-sub">
+            <a class="${menu == 'san-pham' ? 'active' : ''}" href="${ctx}/wp-admin/san-pham">Sản phẩm</a>
+            <a class="${menu == 'ton-kho' ? 'active' : ''}" href="${ctx}/wp-admin/ton-kho">Tồn kho</a>
+            <a class="${menu == 'danh-muc' ? 'active' : ''}" href="${ctx}/wp-admin/danh-muc">Danh mục</a>
+            <a class="${menu == 'thuong-hieu' ? 'active' : ''}" href="${ctx}/wp-admin/thuong-hieu">Thương hiệu</a>
+            <a class="${menu == 'thuoc-tinh' ? 'active' : ''}" href="${ctx}/wp-admin/thuoc-tinh">Thuộc tính</a>
+        </div>
+    </details>
+
+    <a class="nav-item ${menu == 'don-hang' ? 'active' : ''}" href="${ctx}/wp-admin/don-hang">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M5 7h14l-1 13H6L5 7z"/><path d="M9 7a3 3 0 016 0"/></svg>
+        Đơn hàng</a>
+
+    <a class="nav-item ${menu == 'dat-san' ? 'active' : ''}" href="${ctx}/wp-admin/dat-san">
+        <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        Đặt sân <span class="soon-tag">Sắp ra mắt</span></a>
+
+    <c:if test="${!laNhanVien}">
+        <a class="nav-item ${menu == 'nhan-vien' ? 'active' : ''}" href="${ctx}/wp-admin/nhan-vien">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/></svg>
+            Quản lý nhân viên</a>
+    </c:if>
+
+    <a class="nav-item ${menu == 'khach-hang' ? 'active' : ''}" href="${ctx}/wp-admin/khach-hang">
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-3.5 3-5.5 6.5-5.5s6 2 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14.5c2.5 0 4 1.5 4.5 4.5"/></svg>
+        Quản lý khách hàng</a>
+
+    <c:if test="${!laNhanVien}">
+        <details class="nav-group" ${moNhomGiamGia ? 'open' : ''}>
+            <summary>
+                <svg class="ic" viewBox="0 0 24 24"><path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/></svg>
+                Giảm giá, khuyến mãi</summary>
+            <div class="nav-sub">
+                <a class="${menu == 'khuyen-mai' ? 'active' : ''}" href="${ctx}/wp-admin/khuyen-mai">Chương trình khuyến mãi</a>
+                <a class="${menu == 'phieu-giam-gia' ? 'active' : ''}" href="${ctx}/wp-admin/phieu-giam-gia">Phiếu giảm giá</a>
+            </div>
+        </details>
+    </c:if>
+
+    <a class="nav-item ${menu == 'tai-khoan' ? 'active' : ''}" href="${ctx}/wp-admin/tai-khoan">
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c.7-4.5 4-7 8-7s7.3 2.5 8 7"/></svg>
+        Tài khoản</a>
+
+    <div class="user-box">
+        <div class="avatar">${sessionScope.taiKhoan.chuCaiDau}</div>
+        <div>
+            <b>${sessionScope.taiKhoan.hoTen}</b>
+            <small>${ph:nhan(sessionScope.taiKhoan.vaiTro)}</small>
+            <a href="${ctx}/wp-admin/dang-xuat">Đăng xuất</a>
+        </div>
+    </div>
+</aside>
+
+<main class="main">
+    <h1 class="page-title">${tieuDe}</h1>
+    <c:if test="${not empty flashNoiDung}">
+        <div class="alert ${flashLoai}"><c:out value="${flashNoiDung}"/></div>
+    </c:if>
