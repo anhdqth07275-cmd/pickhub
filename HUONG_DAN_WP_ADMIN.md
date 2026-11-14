@@ -33,8 +33,8 @@
 | Thuộc tính | `/wp-admin/thuoc-tinh?loai=` | ThuocTinhServlet | san-pham/thuoc-tinh | MauSac, KhoiLuong, ChatLieu, ChuViTayCam | Xem + thêm + ngừng. **Chưa có sửa** |
 | Khách hàng | `/wp-admin/khach-hang` | KhachHangServlet | khach-hang | KhachHang | Xem + khóa/mở khóa |
 | Nhân viên | `/wp-admin/nhan-vien` | NhanVienServlet | nhan-vien | NhanVien | Xem + khóa/mở khóa. **Chưa có form tạo** |
-| Khuyến mãi | `/wp-admin/khuyen-mai`, `/chi-tiet` | KhuyenMaiServlet, KhuyenMaiChiTietServlet | khuyen-mai/* | ChuongTrinhKhuyenMai, ChiTietChuongTrinhKhuyenMai | **M4 xong**: thêm/sửa chương trình, tạm dừng/chạy lại, thêm/sửa/gỡ sản phẩm giảm giá, hàm `tinhGiaSauKhuyenMai`, scheduler |
-| Phiếu giảm giá | `/wp-admin/phieu-giam-gia`, `/su-dung` | PhieuGiamGiaServlet, SuDungPhieuServlet | phieu-giam-gia/* | PhieuGiamGia, SuDungPhieuGiamGia | **M4 xong**: thêm/sửa phiếu, tạm dừng/chạy lại, ô "Thử phiếu", hàm `kiemTraVaTinhGiam`, `ghiNhanSuDung`, `hoanLai`, scheduler |
+| Khuyến mãi | `/wp-admin/khuyen-mai`, `/chi-tiet` | KhuyenMaiServlet, KhuyenMaiChiTietServlet | khuyen-mai/* | ChuongTrinhKhuyenMai, ChiTietChuongTrinhKhuyenMai | Xem. **Chưa có form, scheduler** |
+| Phiếu giảm giá | `/wp-admin/phieu-giam-gia`, `/su-dung` | PhieuGiamGiaServlet, SuDungPhieuServlet | phieu-giam-gia/* | PhieuGiamGia, SuDungPhieuGiamGia | Xem + tạm dừng. **Chưa có form** |
 | Đặt sân / Bán tại quầy | `/wp-admin/dat-san`, `/ban-hang-tai-quay` | SapRaMatServlet | sap-ra-mat | – | Trang "Sắp ra mắt" |
 | Tài khoản | `/wp-admin/tai-khoan` | TaiKhoanServlet | tai-khoan | NhanVien | Chỉ xem |
 | Đăng nhập/xuất | `/wp-admin/dang-nhap`, `/dang-xuat` | DangNhapServlet, DangXuatServlet | dang-nhap | NhanVien | Xong (bản tối giản) |
