@@ -33,7 +33,7 @@
             <div class="me">
                 <div class="av" id="av"></div>
                 <div><b id="mn"></b><small id="mr"></small><button data-a="out">Đăng xuất</button></div>
-            </div>
+            </div><button data-a="demo" data-i="admin@pickhub.vn">Admin</button>
         </aside>
         <main id="mn2"></main>
     </div>
