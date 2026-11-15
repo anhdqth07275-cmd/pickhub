@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * Gio hang: /gio-hang  (module M5, bat buoc dang nhap - KhachHangFilter).
  * GET : xem gio (tu lam moi gia khuyen mai + canh bao).
- * POST: hanhDong = cap-nhat | xoa-dong | xoa-gio | ap-phieu | bo-phieu
+ * POST: hanhDong = them | cap-nhat | xoa-dong | xoa-gio | ap-phieu | bo-phieu
  * Bang lien quan: HoaDon (trangThai GIO_HANG), HoaDonChiTiet.
  */
 @WebServlet("/gio-hang")
@@ -34,6 +34,11 @@ public class GioHangServlet extends BaseServlet {
         String hanhDong = docChuoi(req, "hanhDong");
         try {
             switch (hanhDong) {
+                case "them":
+                    // note code nhu nay nhe ban: them vao gio bang form thuong (khong AJAX): maChiTietSanPham + soLuong, mac dinh 1
+                    gioHangService.themSanPham(maKhach, docLong(req, "maChiTietSanPham"), docSo(req, "soLuong", 1));
+                    chuyenHuong(req, resp, "/gio-hang", "Đã thêm sản phẩm vào giỏ hàng");
+                    return;
                 case "cap-nhat":
                     gioHangService.capNhatSoLuong(maKhach, docLong(req, "maDong"), docSo(req, "soLuong", 1));
                     chuyenHuong(req, resp, "/gio-hang", "Đã cập nhật giỏ hàng");
