@@ -12,4 +12,11 @@ public class KhachHangRepository extends BaseRepository<KhachHang> {
     public KhachHangRepository() {
         super(KhachHang.class, "maKhachHang");
     }
+    public KhachHang timTheoEmail(String email) {
+        try (org.hibernate.Session s = moSession()) {
+            return s.createQuery("from KhachHang k where lower(k.thuDienTu)=:e", KhachHang.class)
+                    .setParameter("e", email.trim().toLowerCase()).uniqueResult();
+        }
+    }
 }
+

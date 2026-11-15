@@ -66,7 +66,9 @@ public abstract class BaseServlet extends HttpServlet {
 
     protected int docSo(HttpServletRequest req, String ten, int macDinh) {
         try {
-            return Integer.parseInt(docChuoi(req, ten));
+            int giaTri = Integer.parseInt(docChuoi(req, ten));
+            // note code: trang phan trang bat dau tu 1; khong de gia tri 0/am lam Hibernate loi setFirstResult.
+            return giaTri < 1 ? macDinh : giaTri;
         } catch (NumberFormatException e) {
             return macDinh;
         }

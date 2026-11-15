@@ -1,17 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="/trang-chu-backend/layout/header.jspf" %>
-<div class="card">
-    <dl class="info-grid">
-        <div><dt>Họ tên</dt><dd>${nv.hoTen}</dd></div>
-        <div><dt>Email</dt><dd>${nv.thuDienTu}</dd></div>
-        <div><dt>Số điện thoại</dt><dd>${nv.soDienThoai}</dd></div>
-        <div><dt>Vai trò</dt><dd>${ph:nhan(nv.vaiTro)}</dd></div>
-        <div><dt>Ngày sinh</dt><dd>${ph:ngay(nv.ngaySinh)}</dd></div>
-        <div><dt>Trạng thái</dt><dd><span class="badge ${nv.trangThai}">${ph:nhan(nv.trangThai)}</span></dd></div>
-        <div><dt>Đăng nhập gần nhất</dt><dd>${ph:ngayGio(nv.ngayDangNhapCuoi)}</dd></div>
-        <div><dt>Ngày tạo</dt><dd>${ph:ngayGio(nv.ngayTao)}</dd></div>
-    </dl>
-    <%-- TODO (M2): form sua ho so + doi mat khau (can nhap mat khau cu) + doi anh dai dien --%>
-    <p class="muted" style="margin-bottom:0">Chức năng sửa hồ sơ, đổi mật khẩu sẽ hoàn thiện ở module Tài khoản.</p>
-</div>
+<div class="grid-2"><section class="card"><h2>Thông tin cá nhân</h2><form method="post" action="${ctx}/wp-admin/tai-khoan"><input type="hidden" name="hanhDong" value="cap-nhat-ho-so"><label>Họ tên<input name="hoTen" maxlength="100" value="<c:out value='${nv.hoTen}'/>" required></label><label>Email (không thể tự đổi)<input value="<c:out value='${nv.thuDienTu}'/>" disabled></label><label>Số điện thoại<input name="soDienThoai" maxlength="15" value="${nv.soDienThoai}" required></label><label>Ngày sinh<input type="date" name="ngaySinh" value="${nv.ngaySinh}"></label><p>Vai trò: <b>${ph:nhan(nv.vaiTro)}</b></p><button class="btn lime">Lưu hồ sơ</button></form></section><section class="card"><h2>Đổi mật khẩu</h2><form method="post" action="${ctx}/wp-admin/tai-khoan"><input type="hidden" name="hanhDong" value="doi-mat-khau"><label>Mật khẩu hiện tại<input type="password" name="matKhauCu" required></label><label>Mật khẩu mới<input type="password" name="matKhauMoi" minlength="8" required></label><label>Nhập lại mật khẩu mới<input type="password" name="nhapLai" minlength="8" required></label><p class="muted">Mật khẩu tối thiểu 8 ký tự, có chữ và số.</p><button class="btn">Đổi mật khẩu</button></form></section></div>
 <%@ include file="/trang-chu-backend/layout/footer.jspf" %>
