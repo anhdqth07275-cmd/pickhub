@@ -52,8 +52,8 @@ public class KhachHangServlet extends BaseServlet {
             repo.capNhat(kh);
             chuyenHuong(req, resp, "/wp-admin/khach-hang", "Đã khóa tài khoản " + kh.getHoTen());
         } else if ("mo-khoa".equals(hanhDong)) {
-            // note code nhu nay nhe ban: mo khoa thi reset bo dem sai; neu chua tung xac thuc email thi ve CHUA_XAC_THUC
-            kh.setTrangThai(kh.getNgayXacThucThuDienTu() != null ? "HOAT_DONG" : "CHUA_XAC_THUC");
+            // note code: khong con xac thuc email; mo khoa la chuyen ve HOAT_DONG.
+            kh.setTrangThai("HOAT_DONG");
             kh.setSoLanDangNhapSai(0);
             kh.setLyDoKhoa(null);
             kh.setNgayKhoa(null);

@@ -13,10 +13,12 @@
 <form class="login-box" method="post" action="${ctx}/wp-admin/dang-nhap">
     <div class="logo">PICK<span>HUB</span></div>
     <p class="muted" style="margin-top:0">Đăng nhập khu vực quản trị</p>
+    <c:if test="${not empty thongBao}"><div class="alert ok"><c:out value="${thongBao}"/></div></c:if>
     <c:if test="${not empty loi}"><div class="alert loi"><c:out value="${loi}"/></div></c:if>
     <input type="email" name="email" placeholder="Email" value="<c:out value='${email}'/>" required autofocus>
     <input type="password" name="matKhau" placeholder="Mật khẩu" required>
     <button class="btn lime" style="width:100%" type="submit">Đăng nhập</button>
+    <p class="muted" style="font-size:13px">Quên mật khẩu? Vui lòng liên hệ Quản trị viên để được đặt lại.</p>
     <p class="muted" style="font-size:13px">Tài khoản mẫu: admin@pickhub.vn / PickHub@123</p>
 </form>
 </body>

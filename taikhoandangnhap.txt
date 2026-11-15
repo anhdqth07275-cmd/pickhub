@@ -1,0 +1,8 @@
+--Vai trò	Email	Mật khẩu
+--Quản trị viên	admin@pickhub.vn	PickHub@123
+--Quản lý		huong.nguyen@pickhub.vn	PickHub@123
+--Nhân viên	    trang.pham@pickhub.vn	PickHub@123
+
+--http://localhost:8080/wp-admin/dang-nhap
+
+--http://localhost:8080/tai-khoan/dang-ky
