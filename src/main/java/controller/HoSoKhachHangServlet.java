@@ -34,5 +34,16 @@ public class HoSoKhachHangServlet extends BaseServlet {
             req.setAttribute("kh",repo.timTheoId(tk.getId()));req.getRequestDispatcher("/trang-chu-frontend/ho-so.jsp").forward(req,resp);
         }
     }
-    private TaiKhoanKhachHang layTaiKhoan(HttpServletRequest req){HttpSession s=req.getSession(false);return s==null?null:(TaiKhoanKhachHang)s.getAttribute("khachHang");}
+    private TaiKhoanKhachHang layTaiKhoan(HttpServletRequest req){
+        HttpSession s=req.getSession(false);
+        if(s==null) return null;
+        Object o=s.getAttribute("khachHang");
+        if(o instanceof TaiKhoanKhachHang) return (TaiKhoanKhachHang)o;
+        // note code nhu nay nhe ban: khach dang nhap bang /dang-nhap (KhachHangDangNhap) van vao duoc trang ho so
+        if(o instanceof dto.KhachHangDangNhap){
+            dto.KhachHangDangNhap k=(dto.KhachHangDangNhap)o;
+            return new TaiKhoanKhachHang(k.getId(),k.getHoTen(),k.getEmail(),null);
+        }
+        return null;
+    }
 }

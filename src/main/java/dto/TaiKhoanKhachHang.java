@@ -1,19 +1,21 @@
 package dto;
 
-import java.io.Serializable;
-
-/** Thong tin khach hang dang nhap; khong bao gio dua mat khau vao session. */
-public class TaiKhoanKhachHang implements Serializable {
-    private final Long id;
-    private final String hoTen;
-    private final String email;
+/**
+ * Thong tin khach hang dang nhap; khong bao gio dua mat khau vao session.
+ * note code nhu nay nhe ban: ke thua KhachHangDangNhap cua nhom de BaseServlet.khachHang() va KhachHangFilter
+ * (gio hang / dat hang) doc duoc session "khachHang" du dang nhap bang /dang-nhap hay /tai-khoan/dang-nhap.
+ */
+public class TaiKhoanKhachHang extends KhachHangDangNhap {
     private final String anhDaiDien;
+
     public TaiKhoanKhachHang(Long id, String hoTen, String email, String anhDaiDien) {
-        this.id=id; this.hoTen=hoTen; this.email=email; this.anhDaiDien=anhDaiDien;
+        super(id, hoTen, email, null);   // soDienThoai khong dung o man hinh nay
+        this.anhDaiDien = anhDaiDien;
     }
-    public Long getId(){ return id; }
-    public String getHoTen(){ return hoTen; }
-    public String getEmail(){ return email; }
-    public String getAnhDaiDien(){ return anhDaiDien; }
-    public String getChuCaiDau(){ return hoTen==null || hoTen.isEmpty()?"?":hoTen.substring(0,1).toUpperCase(); }
+
+    public String getAnhDaiDien() { return anhDaiDien; }
+
+    public String getChuCaiDau() {
+        return getHoTen() == null || getHoTen().isEmpty() ? "?" : getHoTen().substring(0, 1).toUpperCase();
+    }
 }
