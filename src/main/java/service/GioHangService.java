@@ -7,12 +7,13 @@ import dto.KetQuaPhieuDTO;
 import entity.*;
 import exception.NghiepVuException;
 import org.hibernate.Session;
+import repository.ChiTietChuongTrinhKhuyenMaiRepository;
+import repository.HoaDonChiTietRepository;
+import repository.HoaDonRepository;
 import util.DinhDangUtil;
 import util.GiaoDich;
-import util.HibernateConfig;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,16 +21,25 @@ import java.util.Map;
 
 /**
  * Nghiep vu GIO HANG (module M5).
- * Gio hang = 1 HoaDon co trangThai GIO_HANG (moi khach toi da 1 gio - co unique index UX_HoaDon_gioHang).
+ * Gio hang = 1 HoaDon co trangThai GIO_HANG (moi khach toi da 1 gio - unique index UX_HoaDon_gioHang).
  * San pham trong gio = cac dong HoaDonChiTiet (moi chi tiet san pham chi 1 dong - UNIQUE hoaDon + ctsp).
+ *
+ * Goi sang module khac:
+ *  - M3 (san pham): doc ChiTietSanPham (gia goc, ton kho, trang thai ban); tru ton luc dat hang nam o DatHangService -> ChiTietSanPhamRepository.truTon
+ *  - M4 (khuyen mai / phieu): KhuyenMaiService.tinhGiaSauKhuyenMai, PhieuGiamGiaService.kiemTraVaTinhGiam
+ *  - M6 (lich su): LichSuTrangThaiService.ghiLichSu
  */
 public class GioHangService {
 
-    private final KhuyenMaiService khuyenMaiService = new KhuyenMaiService();
-    private final PhieuGiamGiaService phieuService = new PhieuGiamGiaService();
+    private final HoaDonRepository hoaDonRepo = new HoaDonRepository();
+    private final HoaDonChiTietRepository dongRepo = new HoaDonChiTietRepository();
+    private final ChiTietChuongTrinhKhuyenMaiRepository mucGiamRepo = new ChiTietChuongTrinhKhuyenMaiRepository();
+    private final KhuyenMaiService khuyenMaiService = new KhuyenMaiService();           // M4
+    private final PhieuGiamGiaService phieuService = new PhieuGiamGiaService();         // M4
+    private final LichSuTrangThaiService lichSuService = new LichSuTrangThaiService();  // M6
 
     // =====================================================================
-    // XEM GIO HANG
+    // R - XEM GIO HANG
     // =====================================================================
 
     /**
@@ -58,39 +68,36 @@ public class GioHangService {
 
     /** Tong so san pham trong gio (hien tren icon gio o header). */
     public int demSoLuong(Long maKhach) {
-        try (Session s = HibernateConfig.getFACTORY().openSession()) {
-            Long tong = s.createQuery("select sum(d.soLuong) from HoaDonChiTiet d, HoaDon h where d.maHoaDon = h.maHoaDon "
-                    + "and h.khachHang.maKhachHang = :k and h.trangThai = 'GIO_HANG'", Long.class)
-                    .setParameter("k", maKhach).uniqueResult();
-            return tong == null ? 0 : tong.intValue();
-        }
+        return dongRepo.demSoLuongTrongGio(maKhach);
     }
 
     // =====================================================================
-    // THEM / SUA / XOA
+    // C - THEM SAN PHAM VAO GIO
     // =====================================================================
 
     public void themSanPham(Long maKhach, Long maChiTietSanPham, int soLuong) {
         if (soLuong <= 0) throw new NghiepVuException("Số lượng phải lớn hơn 0");
-        GiaoDich.chay(s -> {
-            ChiTietSanPham c = s.get(ChiTietSanPham.class, maChiTietSanPham);
+        if (maChiTietSanPham == null) throw new NghiepVuException("Thiếu mã sản phẩm");
+
+        chayCoThuLai(s -> {
+            ChiTietSanPham c = s.get(ChiTietSanPham.class, maChiTietSanPham);        // M3: gia goc, ton kho, trang thai ban
             // note code nhu nay nhe ban: chi them bien the DANG_BAN cua san pham dang hien thi
             if (c == null || !"DANG_BAN".equals(c.getTrangThai()) || !Boolean.TRUE.equals(c.getSanPham().getDangHienThi())) {
                 throw new NghiepVuException("Sản phẩm này hiện không bán");
             }
-            HoaDon gio = layHoacTaoGio(s, maKhach);
-            HoaDonChiTiet dong = timDong(s, gio.getMaHoaDon(), maChiTietSanPham);
+
+            HoaDon gio = layHoacTaoGioHang(s, maKhach);
+            HoaDonChiTiet dong = dongRepo.timDong(s, gio.getMaHoaDon(), maChiTietSanPham);
 
             // note code nhu nay nhe ban: da co dong thi CONG DON so luong (unique hoaDon + bien the), khong vuot ton kho
-            int tongSoLuong = soLuong + (dong == null ? 0 : dong.getSoLuong());
+            int daCo = dong == null ? 0 : dong.getSoLuong();
+            int tongSoLuong = soLuong + daCo;
             if (tongSoLuong > c.getSoLuongTon()) {
-                throw new NghiepVuException("Chỉ còn " + c.getSoLuongTon() + " sản phẩm trong kho (trong giỏ bạn đã có "
-                        + (dong == null ? 0 : dong.getSoLuong()) + ")");
+                throw new NghiepVuException("Chỉ còn " + c.getSoLuongTon() + " sản phẩm trong kho (trong giỏ bạn đã có " + daCo + ")");
             }
 
-            // note code nhu nay nhe ban: CHOT GIA tai thoi diem them (donGiaGoc, donGia da ap khuyen mai) cung ten / ma hang / mo ta
-            KetQuaGiaDTO gia = khuyenMaiService.tinhGiaSauKhuyenMai(c);
             if (dong == null) {
+                // note code nhu nay nhe ban: CHOT GIA tai thoi diem them (ten, ma hang, mo ta, donGiaGoc, donGia da ap khuyen mai)
                 dong = new HoaDonChiTiet();
                 dong.setMaHoaDon(gio.getMaHoaDon());
                 dong.setMaChiTietSanPham(c.getMaChiTietSanPham());
@@ -98,40 +105,44 @@ public class GioHangService {
                 dong.setMaHang(c.getMaHang());
                 dong.setMoTaChiTiet(moTaBienThe(c));
             }
+            apDungGia(dong, tinhGiaChoSoLuong(c, tongSoLuong, null));
             dong.setSoLuong(tongSoLuong);
-            dong.setDonGiaGoc(gia.getGiaGoc());
-            dong.setDonGia(gia.getGiaSauGiam());
-            dong.setMaChiTietChuongTrinhKhuyenMai(gia.getMaChiTietCTKM());
-            if (dong.getMaHoaDonChiTiet() == null) s.persist(dong);
+            if (dong.getMaHoaDonChiTiet() == null) dongRepo.themDong(s, dong);
 
             tinhLaiTong(s, gio, danhSachDong(s, gio.getMaHoaDon()));
             return null;
         });
     }
+
+    // =====================================================================
+    // U - SUA SO LUONG
+    // =====================================================================
 
     /** soLuong <= 0 thi xoa dong. */
     public void capNhatSoLuong(Long maKhach, Long maHoaDonChiTiet, int soLuong) {
         GiaoDich.chay(s -> {
             HoaDon gio = timGioBatBuoc(s, maKhach);
             HoaDonChiTiet dong = layDongCuaGio(s, gio, maHoaDonChiTiet);
+
             if (soLuong <= 0) {
-                s.remove(dong);
+                dongRepo.xoaDong(s, dong);
             } else {
                 ChiTietSanPham c = s.get(ChiTietSanPham.class, dong.getMaChiTietSanPham());
                 if (c == null || soLuong > c.getSoLuongTon()) {
                     throw new NghiepVuException("Chỉ còn " + (c == null ? 0 : c.getSoLuongTon()) + " sản phẩm trong kho");
                 }
-                KetQuaGiaDTO gia = khuyenMaiService.tinhGiaSauKhuyenMai(c);   // doi so luong co the doi dieu kien khuyen mai
+                apDungGia(dong, tinhGiaChoSoLuong(c, soLuong, null));   // doi so luong co the doi dieu kien khuyen mai
                 dong.setSoLuong(soLuong);
-                dong.setDonGiaGoc(gia.getGiaGoc());
-                dong.setDonGia(gia.getGiaSauGiam());
-                dong.setMaChiTietChuongTrinhKhuyenMai(gia.getMaChiTietCTKM());
             }
             s.flush();
             tinhLaiTong(s, gio, danhSachDong(s, gio.getMaHoaDon()));
             return null;
         });
     }
+
+    // =====================================================================
+    // D - XOA DONG / XOA GIO
+    // =====================================================================
 
     public void xoaDong(Long maKhach, Long maHoaDonChiTiet) {
         capNhatSoLuong(maKhach, maHoaDonChiTiet, 0);
@@ -141,16 +152,15 @@ public class GioHangService {
         GiaoDich.chay(s -> {
             HoaDon gio = timGio(s, maKhach);
             if (gio == null) return null;
-            for (HoaDonChiTiet d : danhSachDong(s, gio.getMaHoaDon())) s.remove(d);
-            s.flush();
-            gio.setPhieuGiamGia(null);
+            dongRepo.xoaTatCa(s, gio.getMaHoaDon());
+            gio.setPhieuGiamGia(null);                                   // gio rong thi bo luon phieu
             tinhLaiTong(s, gio, new ArrayList<HoaDonChiTiet>());
             return null;
         });
     }
 
     // =====================================================================
-    // PHIEU GIAM GIA
+    // PHIEU GIAM GIA (goi M4)
     // =====================================================================
 
     public void apDungPhieu(Long maKhach, String ma) {
@@ -160,9 +170,11 @@ public class GioHangService {
             if (dong.isEmpty()) throw new NghiepVuException("Giỏ hàng đang trống");
             tinhLaiTong(s, gio, dong);       // tinh lai tamTinh moi nhat truoc khi kiem tra phieu
 
-            KetQuaPhieuDTO kq = phieuService.kiemTraVaTinhGiam( ma, maKhach, gio.getTamTinh());
+            // note code nhu nay nhe ban: M4 kiem tra trang thai, thoi gian, tong luot, luot moi nguoi, don toi thieu; sai thi co lyDoTuChoi
+            KetQuaPhieuDTO kq = phieuService.kiemTraVaTinhGiam(ma, maKhach, gio.getTamTinh());
             if (!kq.isHopLe()) throw new NghiepVuException(kq.getLyDoTuChoi());
-            gio.setPhieuGiamGia(kq.getPhieu());
+
+            gio.setPhieuGiamGia(s.get(PhieuGiamGia.class, kq.getPhieu().getMaPhieuGiamGia()));
             tinhLaiTong(s, gio, dong);
             return null;
         });
@@ -182,8 +194,11 @@ public class GioHangService {
     // =====================================================================
 
     public HoaDon timGio(Session s, Long maKhach) {
-        return s.createQuery("from HoaDon h where h.khachHang.maKhachHang = :k and h.trangThai = 'GIO_HANG'", HoaDon.class)
-                .setParameter("k", maKhach).uniqueResult();
+        return hoaDonRepo.timGioHangCuaKhach(s, maKhach);
+    }
+
+    public List<HoaDonChiTiet> danhSachDong(Session s, Long maHoaDon) {
+        return dongRepo.timTheoHoaDon(s, maHoaDon);
     }
 
     private HoaDon timGioBatBuoc(Session s, Long maKhach) {
@@ -193,39 +208,15 @@ public class GioHangService {
     }
 
     // note code nhu nay nhe ban: chua co gio thi tao moi + ghi LichSu (null -> GIO_HANG) nhu du lieu mau
-    private HoaDon layHoacTaoGio(Session s, Long maKhach) {
+    public HoaDon layHoacTaoGioHang(Session s, Long maKhach) {
         HoaDon gio = timGio(s, maKhach);
         if (gio != null) return gio;
 
         KhachHang kh = s.get(KhachHang.class, maKhach);
         if (kh == null) throw new NghiepVuException("Không tìm thấy khách hàng");
-        gio = new HoaDon();
-        gio.setKhachHang(kh);
-        gio.setTamTinh(BigDecimal.ZERO);
-        gio.setSoTienGiam(BigDecimal.ZERO);
-        gio.setTongTien(BigDecimal.ZERO);
-        gio.setTrangThai("GIO_HANG");
-        s.persist(gio);
-
-        LichSuTrangThaiHoaDon ls = new LichSuTrangThaiHoaDon();
-        ls.setMaHoaDon(gio.getMaHoaDon());
-        ls.setTuTrangThai(null);
-        ls.setDenTrangThai("GIO_HANG");
-        ls.setGhiChu("Khách hàng tạo giỏ hàng");
-        ls.setNgayThayDoi(LocalDateTime.now());
-        s.persist(ls);
-        // Neu 2 request cung tao gio 1 luc thi unique index se bao loi o day (khach thu lai la duoc)
+        gio = hoaDonRepo.taoGioHang(s, kh);
+        lichSuService.ghiLichSu(s, gio.getMaHoaDon(), null, "GIO_HANG", "Khách hàng tạo giỏ hàng", null);   // M6
         return gio;
-    }
-
-    public List<HoaDonChiTiet> danhSachDong(Session s, Long maHoaDon) {
-        return s.createQuery("from HoaDonChiTiet d where d.maHoaDon = :h order by d.maHoaDonChiTiet", HoaDonChiTiet.class)
-                .setParameter("h", maHoaDon).list();
-    }
-
-    private HoaDonChiTiet timDong(Session s, Long maHoaDon, Long maChiTietSanPham) {
-        return s.createQuery("from HoaDonChiTiet d where d.maHoaDon = :h and d.maChiTietSanPham = :c", HoaDonChiTiet.class)
-                .setParameter("h", maHoaDon).setParameter("c", maChiTietSanPham).uniqueResult();
     }
 
     // note code nhu nay nhe ban: chi cho sua dong thuoc gio cua CHINH khach do (chong sua gio nguoi khac bang cach doi id tren form)
@@ -253,13 +244,11 @@ public class GioHangService {
                 loi.put(d.getMaHoaDonChiTiet(), ten + " chỉ còn " + c.getSoLuongTon() + " sản phẩm trong kho, vui lòng giảm số lượng");
                 continue;
             }
-            KetQuaGiaDTO gia = khuyenMaiService.tinhGiaSauKhuyenMai(c);
+            KetQuaGiaDTO gia = tinhGiaChoSoLuong(c, d.getSoLuong(), canhBao);
             if (gia.getGiaSauGiam().compareTo(d.getDonGia()) != 0) {
                 canhBao.add("Giá " + ten + " đã thay đổi: " + DinhDangUtil.tien(d.getDonGia()) + " → " + DinhDangUtil.tien(gia.getGiaSauGiam()));
             }
-            d.setDonGiaGoc(gia.getGiaGoc());
-            d.setDonGia(gia.getGiaSauGiam());
-            d.setMaChiTietChuongTrinhKhuyenMai(gia.getMaChiTietCTKM());
+            apDungGia(d, gia);
         }
         return loi;
     }
@@ -277,10 +266,7 @@ public class GioHangService {
         String thongBao = null;
         if (gio.getPhieuGiamGia() != null) {
             KetQuaPhieuDTO kq = phieuService.kiemTraVaTinhGiam(
-                    gio.getPhieuGiamGia().getMaGiamGia(),
-                    gio.getKhachHang().getMaKhachHang(), // hoặc biến maKhach đang có sẵn trong hàm
-                    gio.getTamTinh()
-            );
+                    gio.getPhieuGiamGia().getMaGiamGia(), gio.getKhachHang().getMaKhachHang(), tamTinh);   // M4
             if (kq.isHopLe()) {
                 giam = kq.getSoTienGiam();
             } else {
@@ -292,6 +278,50 @@ public class GioHangService {
         gio.setSoTienGiam(giam);
         gio.setTongTien(tamTinh.subtract(giam));
         return thongBao;
+    }
+
+    /**
+     * Gia 1 bien the khi mua "soLuong" cai: gia M4 (tinhGiaSauKhuyenMai) nhung neu so luong vuot so suat khuyen mai con lai
+     * thi tinh GIA GOC (neu khong luc dat hang M4 se bao het suat va khach mo lai gio van thay gia cu -> vong lap loi).
+     */
+    private KetQuaGiaDTO tinhGiaChoSoLuong(ChiTietSanPham c, int soLuong, List<String> canhBao) {
+        KetQuaGiaDTO gia = khuyenMaiService.tinhGiaSauKhuyenMai(c);          // M4
+        if (gia.getMaChiTietCTKM() == null) return gia;
+
+        ChiTietChuongTrinhKhuyenMai muc = mucGiamRepo.timTheoId(gia.getMaChiTietCTKM());
+        if (muc != null && muc.getSoLuongGioiHan() != null && muc.getSoLuongDaBan() + soLuong > muc.getSoLuongGioiHan()) {
+            if (canhBao != null) {
+                canhBao.add("Khuyến mãi của " + c.getSanPham().getTenSanPham() + " (" + c.getMaHang() + ") chỉ còn "
+                        + (muc.getSoLuongGioiHan() - muc.getSoLuongDaBan()) + " suất, số lượng bạn chọn vượt quá nên tính theo giá gốc");
+            }
+            return new KetQuaGiaDTO(gia.getGiaGoc(), gia.getGiaGoc(), null);
+        }
+        return gia;
+    }
+
+    // chot gia vao dong hoa don chi tiet: donGiaGoc, donGia, maChiTietChuongTrinhKhuyenMai (CK_HDCT_gia: donGia <= donGiaGoc)
+    private void apDungGia(HoaDonChiTiet dong, KetQuaGiaDTO gia) {
+        dong.setDonGiaGoc(gia.getGiaGoc());
+        dong.setDonGia(gia.getGiaSauGiam());
+        dong.setMaChiTietChuongTrinhKhuyenMai(gia.getMaChiTietCTKM());
+    }
+
+    // note code nhu nay nhe ban: 2 request cung tao gio (hoac cung them 1 san pham) 1 luc -> vi pham unique index; thu lai 1 lan se thay gio da co
+    private <R> R chayCoThuLai(GiaoDich.CongViec<R> congViec) {
+        try {
+            return GiaoDich.chay(congViec);
+        } catch (RuntimeException e) {
+            if (laLoiTrungDuLieu(e)) return GiaoDich.chay(congViec);
+            throw e;
+        }
+    }
+
+    private boolean laLoiTrungDuLieu(Throwable e) {
+        while (e != null) {
+            if (e instanceof org.hibernate.exception.ConstraintViolationException) return true;
+            e = e.getCause();
+        }
+        return false;
     }
 
     private DongGioHangDTO taoDong(Session s, HoaDonChiTiet d, String loi) {
