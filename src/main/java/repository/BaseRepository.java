@@ -40,6 +40,14 @@ public class BaseRepository<T> {
             return s.createQuery("from " + lop.getSimpleName() + " x order by x." + tenId + " asc", lop).list();
         }
     }
+    public List<T> layDangHoatDong() {
+        try (Session s = moSession()) {
+            return s.createQuery(
+                    "from " + lop.getSimpleName() + " x where x.trangThai = 'HOAT_DONG' order by x." + tenId + " asc",
+                    lop
+            ).list();
+        }
+    }
 
     public long dem() {
         return demCoDieuKien(null);

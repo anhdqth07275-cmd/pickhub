@@ -1,0 +1,35 @@
+<%-- Khung chung phan DAU cua trang khach: thanh tren cung (logo, gio hang, dang nhap) + mo the <main>. --%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<%@ taglib prefix="ph" uri="http://pickhub.vn/functions" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>${tieuDe} - PickHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="${ctx}/assets/cua-hang.css">
+</head>
+<body>
+<header class="top">
+    <a class="logo" href="${ctx}/cua-hang">PICK<span>HUB</span></a>
+    <nav><a class="${menu == 'cua-hang' ? 'on' : ''}" href="${ctx}/cua-hang">Cửa hàng</a></nav>
+    <div class="right">
+        <c:choose>
+            <c:when test="${not empty sessionScope.khachHang}">
+                <span>Xin chào, <b>${sessionScope.khachHang.hoTen}</b></span>
+                <a href="${ctx}/dang-xuat">Đăng xuất</a>
+            </c:when>
+            <c:otherwise><a href="${ctx}/dang-nhap">Đăng nhập</a></c:otherwise>
+        </c:choose>
+        <%-- note code nhu nay nhe ban: so tren icon gio = tong so luong trong gio (servlet gan soLuongGio, AJAX cap nhat lai khi them) --%>
+        <a class="cart" href="${ctx}/gio-hang">🛒 Giỏ hàng <b id="badge">${empty soLuongGio ? 0 : soLuongGio}</b></a>
+    </div>
+</header>
+<main class="wrap">
+    <c:if test="${not empty flashNoiDung}">
+        <div class="alert ${flashLoai}"><c:out value="${flashNoiDung}"/></div>
+    </c:if>
