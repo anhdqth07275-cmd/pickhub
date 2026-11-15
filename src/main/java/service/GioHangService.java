@@ -89,7 +89,7 @@ public class GioHangService {
             }
 
             // note code nhu nay nhe ban: CHOT GIA tai thoi diem them (donGiaGoc, donGia da ap khuyen mai) cung ten / ma hang / mo ta
-            KetQuaGiaDTO gia = khuyenMaiService.tinhGia(s, c, tongSoLuong);
+            KetQuaGiaDTO gia = khuyenMaiService.tinhGiaSauKhuyenMai(c);
             if (dong == null) {
                 dong = new HoaDonChiTiet();
                 dong.setMaHoaDon(gio.getMaHoaDon());
@@ -101,7 +101,7 @@ public class GioHangService {
             dong.setSoLuong(tongSoLuong);
             dong.setDonGiaGoc(gia.getGiaGoc());
             dong.setDonGia(gia.getGiaSauGiam());
-            dong.setMaChiTietChuongTrinhKhuyenMai(gia.getMaChiTietCtkm());
+            dong.setMaChiTietChuongTrinhKhuyenMai(gia.getMaChiTietCTKM());
             if (dong.getMaHoaDonChiTiet() == null) s.persist(dong);
 
             tinhLaiTong(s, gio, danhSachDong(s, gio.getMaHoaDon()));
@@ -121,11 +121,11 @@ public class GioHangService {
                 if (c == null || soLuong > c.getSoLuongTon()) {
                     throw new NghiepVuException("Chỉ còn " + (c == null ? 0 : c.getSoLuongTon()) + " sản phẩm trong kho");
                 }
-                KetQuaGiaDTO gia = khuyenMaiService.tinhGia(s, c, soLuong);   // doi so luong co the doi dieu kien khuyen mai
+                KetQuaGiaDTO gia = khuyenMaiService.tinhGiaSauKhuyenMai(c);   // doi so luong co the doi dieu kien khuyen mai
                 dong.setSoLuong(soLuong);
                 dong.setDonGiaGoc(gia.getGiaGoc());
                 dong.setDonGia(gia.getGiaSauGiam());
-                dong.setMaChiTietChuongTrinhKhuyenMai(gia.getMaChiTietCtkm());
+                dong.setMaChiTietChuongTrinhKhuyenMai(gia.getMaChiTietCTKM());
             }
             s.flush();
             tinhLaiTong(s, gio, danhSachDong(s, gio.getMaHoaDon()));
@@ -160,7 +160,7 @@ public class GioHangService {
             if (dong.isEmpty()) throw new NghiepVuException("Giỏ hàng đang trống");
             tinhLaiTong(s, gio, dong);       // tinh lai tamTinh moi nhat truoc khi kiem tra phieu
 
-            KetQuaPhieuDTO kq = phieuService.kiemTraVaTinhGiam(s, ma, maKhach, gio.getTamTinh());
+            KetQuaPhieuDTO kq = phieuService.kiemTraVaTinhGiam( ma, maKhach, gio.getTamTinh());
             if (!kq.isHopLe()) throw new NghiepVuException(kq.getLyDoTuChoi());
             gio.setPhieuGiamGia(kq.getPhieu());
             tinhLaiTong(s, gio, dong);
@@ -253,13 +253,13 @@ public class GioHangService {
                 loi.put(d.getMaHoaDonChiTiet(), ten + " chỉ còn " + c.getSoLuongTon() + " sản phẩm trong kho, vui lòng giảm số lượng");
                 continue;
             }
-            KetQuaGiaDTO gia = khuyenMaiService.tinhGia(s, c, d.getSoLuong());
+            KetQuaGiaDTO gia = khuyenMaiService.tinhGiaSauKhuyenMai(c);
             if (gia.getGiaSauGiam().compareTo(d.getDonGia()) != 0) {
                 canhBao.add("Giá " + ten + " đã thay đổi: " + DinhDangUtil.tien(d.getDonGia()) + " → " + DinhDangUtil.tien(gia.getGiaSauGiam()));
             }
             d.setDonGiaGoc(gia.getGiaGoc());
             d.setDonGia(gia.getGiaSauGiam());
-            d.setMaChiTietChuongTrinhKhuyenMai(gia.getMaChiTietCtkm());
+            d.setMaChiTietChuongTrinhKhuyenMai(gia.getMaChiTietCTKM());
         }
         return loi;
     }
@@ -276,7 +276,11 @@ public class GioHangService {
         BigDecimal giam = BigDecimal.ZERO;
         String thongBao = null;
         if (gio.getPhieuGiamGia() != null) {
-            KetQuaPhieuDTO kq = phieuService.kiemTra(s, gio.getPhieuGiamGia(), gio.getKhachHang().getMaKhachHang(), tamTinh);
+            KetQuaPhieuDTO kq = phieuService.kiemTraVaTinhGiam(
+                    gio.getPhieuGiamGia().getMaGiamGia(),
+                    gio.getKhachHang().getMaKhachHang(), // hoặc biến maKhach đang có sẵn trong hàm
+                    gio.getTamTinh()
+            );
             if (kq.isHopLe()) {
                 giam = kq.getSoTienGiam();
             } else {

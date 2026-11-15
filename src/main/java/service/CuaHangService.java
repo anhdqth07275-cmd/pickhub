@@ -22,7 +22,7 @@ public class CuaHangService {
                     + "and c.soLuongTon > 0 order by c.sanPham.maSanPham, c.maChiTietSanPham", ChiTietSanPham.class).list();
             List<BienTheBanDTO> kq = new ArrayList<BienTheBanDTO>();
             for (ChiTietSanPham c : ds) {
-                KetQuaGiaDTO gia = khuyenMaiService.tinhGia(s, c, 1);
+                KetQuaGiaDTO gia = khuyenMaiService.tinhGiaSauKhuyenMai(c);
                 BienTheBanDTO b = new BienTheBanDTO();
                 b.setMaChiTietSanPham(c.getMaChiTietSanPham());
                 b.setTenSanPham(c.getSanPham().getTenSanPham());

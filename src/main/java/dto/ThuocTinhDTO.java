@@ -12,6 +12,12 @@ public class ThuocTinhDTO {
     public ThuocTinhDTO(Long ma, String giaTri, String trangThai, LocalDateTime ngayTao) {
         this.ma = ma; this.giaTri = giaTri; this.trangThai = trangThai; this.ngayTao = ngayTao;
     }
+
+    // Thêm constructor 5 tham số để tương thích với các lệnh gọi trong ThuocTinhService
+    public ThuocTinhDTO(Long ma, String giaTri, String boQua, String trangThai, LocalDateTime ngayTao) {
+        this(ma, giaTri, trangThai, ngayTao);
+    }
+
     public Long getMa() { return ma; }
     public String getGiaTri() { return giaTri; }
     public String getTrangThai() { return trangThai; }

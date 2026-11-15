@@ -82,7 +82,7 @@ public class DatHangService {
             }
 
             // 3) ghi nhan phieu giam gia (neu co)
-            if (gio.getPhieuGiamGia() != null) suDungPhieuService.ghiNhanSuDung(s, gio, bayGio);
+            suDungPhieuService.ghiNhanSuDung(s, gio.getMaHoaDon());
 
             // 4) dien thong tin nhan hang (CHECK CK_HoaDon_thongTinNhan bat buoc day du khi khong con la gio hang)
             gio.setTenNguoiNhan(tt.getTenNguoiNhan());

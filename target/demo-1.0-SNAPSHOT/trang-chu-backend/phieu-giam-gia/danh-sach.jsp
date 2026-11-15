@@ -46,7 +46,7 @@
                 <td><span class="badge ${p.trangThai}">${ph:nhan(p.trangThai)}</span></td>
                 <td class="nowrap">
                     <a class="btn sm line" href="${ctx}/wp-admin/phieu-giam-gia?hanhDong=form&id=${p.maPhieuGiamGia}">Sửa</a>
-                    <%-- phieu HET_HAN thi khong con nut tam dung / chay lai --%>
+                        <%-- phieu HET_HAN thi khong con nut tam dung / chay lai --%>
                     <c:if test="${p.trangThai != 'HET_HAN'}">
                         <form class="inline" method="post" action="${ctx}/wp-admin/phieu-giam-gia">
                             <input type="hidden" name="hanhDong" value="doi-trang-thai">

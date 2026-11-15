@@ -3,8 +3,7 @@ package util;
 
 
 
-import entity.HoaDon;
-import entity.HoaDonChiTiet;
+import entity.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -32,7 +31,7 @@ public class HibernateConfig {
         properties.put(Environment.DRIVER, "com.microsoft.sqlserver.jdbc.SQLServerDriver");
         properties.put(Environment.URL, "jdbc:sqlserver://localhost:1433;databaseName=PickHub;encrypt=true;trustServerCertificate=true;");
         properties.put(Environment.USER, "sa");
-        properties.put(Environment.PASS, "QA205@gmail.com");
+        properties.put(Environment.PASS, "1");
         properties.put(Environment.SHOW_SQL, "true");
         /*
             - Khai báo cho Hibernate biết các Class nào trong Java sẽ được ánh xạ xuống database

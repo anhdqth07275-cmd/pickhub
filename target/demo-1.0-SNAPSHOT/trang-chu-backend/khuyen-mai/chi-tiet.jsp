@@ -7,7 +7,6 @@
     <p style="margin-bottom:0">${ph:ngayGio(ct.ngayBatDau)} → ${ph:ngayGio(ct.ngayKetThuc)}</p>
 </div>
 
-<%-- note code nhu nay nhe ban: chuong trinh KET_THUC thi chi xem, an form them / sua / go --%>
 <c:set var="conSua" value="${ct.trangThai != 'KET_THUC'}"/>
 
 <c:if test="${conSua}">

@@ -73,7 +73,7 @@ public class ThuocTinhService {
         switch (loai) {
             case "chat-lieu":
                 for (ChatLieu c : chatLieuRepo.layTatCa())
-                    ds.add(new ThuocTinhDTO(c.getMaChatLieu(), c.getTenChatLieu(), c.getTenChatLieu(), c.getTrangThai(), c.getNgayTao()));
+                    ds.add(new ThuocTinhDTO(c.getMaChatLieu(), c.getTenChatLieu(), c.getTrangThai(), c.getNgayTao()));
                 break;
             case "khoi-luong":
                 for (KhoiLuong k : khoiLuongRepo.layTatCa())
