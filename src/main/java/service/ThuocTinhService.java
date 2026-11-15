@@ -1,6 +1,5 @@
 package service;
 
-import dto.PhanTrang;
 import dto.ThuocTinhDTO;
 import entity.ChatLieu;
 import entity.ChuViTayCam;
@@ -11,193 +10,149 @@ import repository.ChatLieuRepository;
 import repository.ChuViTayCamRepository;
 import repository.KhoiLuongRepository;
 import repository.MauSacRepository;
+import util.DocSoUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Nghiep vu 4 thuoc tinh san pham: mau sac, chat lieu, khoi luong, chu vi tay cam.
- * "loai" nhan 1 trong: mausac | chat-lieu | khoi-luong | chu-vi (sai thi mac dinh mausac).
- * M3 goi cac ham layXxxDangHoatDong() de do vao dropdown form san pham.
+ * 4 thuoc tinh san pham (M2): mau sac, chat lieu, khoi luong, chu vi tay cam.
+ * Dung chung 1 service, phan biet bang tham so "loai": "mau-sac" / "chat-lieu" / "khoi-luong" / "chu-vi".
+ * M3 goi layDangHoatDong(loai) cho dropdown form bien the.
  */
 public class ThuocTinhService {
 
-    private final MauSacRepository mauSacRepo = new MauSacRepository();
+    public static final String MAU_SAC = "mau-sac";
+    public static final String CHAT_LIEU = "chat-lieu";
+    public static final String KHOI_LUONG = "khoi-luong";
+    public static final String CHU_VI = "chu-vi";
+
+    private final MauSacRepository mauRepo = new MauSacRepository();
     private final ChatLieuRepository chatLieuRepo = new ChatLieuRepository();
     private final KhoiLuongRepository khoiLuongRepo = new KhoiLuongRepository();
     private final ChuViTayCamRepository chuViRepo = new ChuViTayCamRepository();
 
-    // ---------------- DROPDOWN CHO M3 (chi lay HOAT_DONG) ----------------
-    public List<MauSac> layMauSacDangHoatDong() { return mauSacRepo.layDangHoatDong(); }
-    public List<ChatLieu> layChatLieuDangHoatDong() { return chatLieuRepo.layDangHoatDong(); }
-    public List<KhoiLuong> layKhoiLuongDangHoatDong() { return khoiLuongRepo.layDangHoatDong(); }
-    public List<ChuViTayCam> layChuViDangHoatDong() { return chuViRepo.layDangHoatDong(); }
-
-    // ---------------- TIEN ICH ----------------
-
-    public String chuanHoaLoai(String loai) {
-        if ("chat-lieu".equals(loai) || "khoi-luong".equals(loai) || "chu-vi".equals(loai)) return loai;
-        return "mausac";
-    }
-
-    public String tenThuocTinh(String loai) {
+    /** Tat ca gia tri cua 1 loai thuoc tinh. */
+    public List<ThuocTinhDTO> layDanhSach(String loai) {
+        List<ThuocTinhDTO> kq = new ArrayList<ThuocTinhDTO>();
         switch (loai) {
-            case "chat-lieu": return "Chất liệu";
-            case "khoi-luong": return "Khối lượng";
-            case "chu-vi": return "Chu vi tay cầm";
-            default: return "Màu sắc";
-        }
-    }
-
-    // ---------------- DANH SACH: tim kiem + loc trang thai + phan trang ----------------
-
-    // note code nhu nay nhe ban: moi bang chi vai chuc dong nen lay het roi loc + cat trang bang Java cho don gian.
-    // (khoi luong / chu vi la SO nen tim bang chuoi o day de dang hon la viet HQL cho tung kieu)
-    public PhanTrang<ThuocTinhDTO> timKiem(String loai, String tuKhoa, String trangThai, int trang, int kichThuoc) {
-        List<ThuocTinhDTO> khop = new ArrayList<ThuocTinhDTO>();
-        String tk = tuKhoa == null ? "" : tuKhoa.trim().toLowerCase();
-        for (ThuocTinhDTO t : layTatCa(loai)) {
-            boolean dungTuKhoa = tk.isEmpty() || t.getGiaTri().toLowerCase().contains(tk);
-            boolean dungTrangThai = trangThai == null || trangThai.isEmpty() || trangThai.equals(t.getTrangThai());
-            if (dungTuKhoa && dungTrangThai) khop.add(t);
-        }
-        int tu = Math.min((trang - 1) * kichThuoc, khop.size());          // cat trang: lay [tu, den)
-        int den = Math.min(tu + kichThuoc, khop.size());
-        return new PhanTrang<ThuocTinhDTO>(new ArrayList<ThuocTinhDTO>(khop.subList(tu, den)), trang, kichThuoc, khop.size());
-    }
-
-    // gom 4 bang khac nhau ve cung 1 kieu ThuocTinhDTO de JSP chi can 1 bang hien thi
-    private List<ThuocTinhDTO> layTatCa(String loai) {
-        List<ThuocTinhDTO> ds = new ArrayList<ThuocTinhDTO>();
-        switch (loai) {
-            case "chat-lieu":
-                for (ChatLieu c : chatLieuRepo.layTatCa())
-                    ds.add(new ThuocTinhDTO(c.getMaChatLieu(), c.getTenChatLieu(), c.getTrangThai(), c.getNgayTao()));
+            case MAU_SAC:
+                for (MauSac x : mauRepo.layTatCa()) kq.add(new ThuocTinhDTO(x.getMaMauSac(), x.getTenMauSac(), x.getTenMauSac(), x.getTrangThai(), x.getNgayTao()));
                 break;
-            case "khoi-luong":
-                for (KhoiLuong k : khoiLuongRepo.layTatCa())
-                    ds.add(new ThuocTinhDTO(k.getMaKhoiLuong(), k.getKhoiLuongGram() + " g", String.valueOf(k.getKhoiLuongGram()), k.getTrangThai(), k.getNgayTao()));
+            case CHAT_LIEU:
+                for (ChatLieu x : chatLieuRepo.layTatCa()) kq.add(new ThuocTinhDTO(x.getMaChatLieu(), x.getTenChatLieu(), x.getTenChatLieu(), x.getTrangThai(), x.getNgayTao()));
                 break;
-            case "chu-vi":
-                for (ChuViTayCam c : chuViRepo.layTatCa())
-                    ds.add(new ThuocTinhDTO(c.getMaChuViTayCam(), c.getChuViInch().toPlainString() + " inch", c.getChuViInch().toPlainString(), c.getTrangThai(), c.getNgayTao()));
+            case KHOI_LUONG:
+                for (KhoiLuong x : khoiLuongRepo.layTatCa()) kq.add(new ThuocTinhDTO(x.getMaKhoiLuong(), x.getKhoiLuongGram() + " g", String.valueOf(x.getKhoiLuongGram()), x.getTrangThai(), x.getNgayTao()));
+                break;
+            case CHU_VI:
+                for (ChuViTayCam x : chuViRepo.layTatCa()) {
+                    String so = x.getChuViInch().stripTrailingZeros().toPlainString();
+                    kq.add(new ThuocTinhDTO(x.getMaChuViTayCam(), so + " inch", so, x.getTrangThai(), x.getNgayTao()));
+                }
                 break;
             default:
-                for (MauSac m : mauSacRepo.layTatCa())
-                    ds.add(new ThuocTinhDTO(m.getMaMauSac(), m.getTenMauSac(), m.getTenMauSac(), m.getTrangThai(), m.getNgayTao()));
+                throw new NghiepVuException("Loại thuộc tính không hợp lệ");
         }
-        return ds;
+        return kq;
     }
 
-    // ---------------- THEM / SUA / NGUNG ----------------
-
-    public void them(String loai, String giaTri) {
-        luu(loai, null, giaTri);
+    /** Chi cac gia tri HOAT_DONG - dung cho dropdown form bien the san pham (M3). */
+    public List<ThuocTinhDTO> layDangHoatDong(String loai) {
+        List<ThuocTinhDTO> kq = new ArrayList<ThuocTinhDTO>();
+        for (ThuocTinhDTO t : layDanhSach(loai)) {
+            if ("HOAT_DONG".equals(t.getTrangThai())) kq.add(t);
+        }
+        return kq;
     }
 
-    public void sua(String loai, Long id, String giaTri) {
-        if (id == null) throw new NghiepVuException("Thiếu mã thuộc tính");
-        luu(loai, id, giaTri);
-    }
-
-    // note code nhu nay nhe ban: them va sua dung chung 1 ham, id = null la them moi, id != null la sua
-    private void luu(String loai, Long id, String giaTri) {
+    /** Them (id = null) hoac sua (id != null) 1 gia tri thuoc tinh. */
+    public void luu(String loai, Long id, String giaTri) {
         giaTri = giaTri == null ? "" : giaTri.trim();
-        if (giaTri.isEmpty()) throw new NghiepVuException("Vui lòng nhập giá trị");
+        if (giaTri.isEmpty()) throw new NghiepVuException("Giá trị không được để trống");
         switch (loai) {
-            case "chat-lieu": luuChatLieu(id, giaTri); break;
-            case "khoi-luong": luuKhoiLuong(id, giaTri); break;
-            case "chu-vi": luuChuVi(id, giaTri); break;
-            default: luuMauSac(id, giaTri);
+            case MAU_SAC: {
+                if (giaTri.length() > 50) throw new NghiepVuException("Tên màu tối đa 50 ký tự");
+                if (mauRepo.daTonTai("tenMauSac", giaTri, id)) throw new NghiepVuException("Màu này đã tồn tại");
+                MauSac x = id == null ? new MauSac() : mauRepo.timTheoId(id);
+                if (x == null) throw new NghiepVuException("Không tìm thấy màu sắc");
+                x.setTenMauSac(giaTri);
+                if (id == null) { x.setTrangThai("HOAT_DONG"); mauRepo.luu(x); } else mauRepo.capNhat(x);
+                break;
+            }
+            case CHAT_LIEU: {
+                if (giaTri.length() > 100) throw new NghiepVuException("Tên chất liệu tối đa 100 ký tự");
+                if (chatLieuRepo.daTonTai("tenChatLieu", giaTri, id)) throw new NghiepVuException("Chất liệu này đã tồn tại");
+                ChatLieu x = id == null ? new ChatLieu() : chatLieuRepo.timTheoId(id);
+                if (x == null) throw new NghiepVuException("Không tìm thấy chất liệu");
+                x.setTenChatLieu(giaTri);
+                if (id == null) { x.setTrangThai("HOAT_DONG"); chatLieuRepo.luu(x); } else chatLieuRepo.capNhat(x);
+                break;
+            }
+            case KHOI_LUONG: {
+                Integer gram = DocSoUtil.soNguyen(giaTri, "Khối lượng");
+                // note code nhu nay nhe ban: vot pickleball nang khoang 200 - 270g, cho phep 1 - 2000g cho thoang
+                if (gram == null || gram < 1 || gram > 2000) throw new NghiepVuException("Khối lượng phải từ 1 đến 2000 gram");
+                if (khoiLuongRepo.daTonTai("khoiLuongGram", gram, id)) throw new NghiepVuException("Khối lượng này đã tồn tại");
+                KhoiLuong x = id == null ? new KhoiLuong() : khoiLuongRepo.timTheoId(id);
+                if (x == null) throw new NghiepVuException("Không tìm thấy khối lượng");
+                x.setKhoiLuongGram(gram);
+                if (id == null) { x.setTrangThai("HOAT_DONG"); khoiLuongRepo.luu(x); } else khoiLuongRepo.capNhat(x);
+                break;
+            }
+            case CHU_VI: {
+                BigDecimal inch = DocSoUtil.soThapPhan(giaTri, "Chu vi tay cầm");
+                if (inch == null || inch.signum() <= 0 || inch.compareTo(new BigDecimal("9.999")) > 0) throw new NghiepVuException("Chu vi phải lớn hơn 0 và nhỏ hơn 10 inch");
+                if (chuViRepo.daTonTai("chuViInch", inch, id)) throw new NghiepVuException("Chu vi này đã tồn tại");
+                ChuViTayCam x = id == null ? new ChuViTayCam() : chuViRepo.timTheoId(id);
+                if (x == null) throw new NghiepVuException("Không tìm thấy chu vi tay cầm");
+                x.setChuViInch(inch);
+                if (id == null) { x.setTrangThai("HOAT_DONG"); chuViRepo.luu(x); } else chuViRepo.capNhat(x);
+                break;
+            }
+            default:
+                throw new NghiepVuException("Loại thuộc tính không hợp lệ");
         }
     }
 
-    private void luuMauSac(Long id, String ten) {
-        if (ten.length() > 50) throw new NghiepVuException("Tên màu tối đa 50 ký tự");
-        if (mauSacRepo.daTonTai("tenMauSac", ten, id)) throw new NghiepVuException("Màu sắc đã tồn tại");
-        MauSac m = id == null ? new MauSac() : mauSacRepo.timTheoId(id);
-        if (m == null) throw new NghiepVuException("Không tìm thấy màu sắc");
-        m.setTenMauSac(ten);
-        if (id == null) { m.setTrangThai("HOAT_DONG"); mauSacRepo.luu(m); } else mauSacRepo.capNhat(m);
-    }
-
-    private void luuChatLieu(Long id, String ten) {
-        if (ten.length() > 100) throw new NghiepVuException("Tên chất liệu tối đa 100 ký tự");
-        if (chatLieuRepo.daTonTai("tenChatLieu", ten, id)) throw new NghiepVuException("Chất liệu đã tồn tại");
-        ChatLieu c = id == null ? new ChatLieu() : chatLieuRepo.timTheoId(id);
-        if (c == null) throw new NghiepVuException("Không tìm thấy chất liệu");
-        c.setTenChatLieu(ten);
-        if (id == null) { c.setTrangThai("HOAT_DONG"); chatLieuRepo.luu(c); } else chatLieuRepo.capNhat(c);
-    }
-
-    // note code nhu nay nhe ban: khoi luong la SMALLINT trong DB nen phai > 0 va <= 32767, va khong trung (UNIQUE)
-    private void luuKhoiLuong(Long id, String giaTri) {
-        int gram;
-        try {
-            gram = Integer.parseInt(giaTri);
-        } catch (NumberFormatException e) {
-            throw new NghiepVuException("Khối lượng phải là số nguyên dương (gram)");
-        }
-        if (gram <= 0 || gram > 32767) throw new NghiepVuException("Khối lượng phải từ 1 đến 32767 gram");
-        if (khoiLuongRepo.daTonTai("khoiLuongGram", gram, id)) throw new NghiepVuException("Khối lượng đã tồn tại");
-        KhoiLuong k = id == null ? new KhoiLuong() : khoiLuongRepo.timTheoId(id);
-        if (k == null) throw new NghiepVuException("Không tìm thấy khối lượng");
-        k.setKhoiLuongGram(gram);
-        if (id == null) { k.setTrangThai("HOAT_DONG"); khoiLuongRepo.luu(k); } else khoiLuongRepo.capNhat(k);
-    }
-
-    // note code nhu nay nhe ban: chu vi la DECIMAL(4,3) -> toi da 9.999 va giu dung 3 so thap phan (4.125)
-    private void luuChuVi(Long id, String giaTri) {
-        BigDecimal inch;
-        try {
-            inch = new BigDecimal(giaTri.replace(',', '.')).setScale(3, BigDecimal.ROUND_HALF_UP);
-        } catch (NumberFormatException e) {
-            throw new NghiepVuException("Chu vi phải là số (inch), ví dụ 4.125");
-        }
-        if (inch.signum() <= 0 || inch.compareTo(new BigDecimal("10")) >= 0) throw new NghiepVuException("Chu vi phải lớn hơn 0 và nhỏ hơn 10 inch");
-        if (chuViRepo.daTonTai("chuViInch", inch, id)) throw new NghiepVuException("Chu vi đã tồn tại");
-        ChuViTayCam c = id == null ? new ChuViTayCam() : chuViRepo.timTheoId(id);
-        if (c == null) throw new NghiepVuException("Không tìm thấy chu vi");
-        c.setChuViInch(inch);
-        if (id == null) { c.setTrangThai("HOAT_DONG"); chuViRepo.luu(c); } else chuViRepo.capNhat(c);
-    }
-
-    // note code nhu nay nhe ban: "ngung su dung thay vi xoa" - bien the san pham dang dung thuoc tinh nay van giu nguyen, khong loi khoa ngoai
+    // note code nhu nay nhe ban: khong xoa cung vi bien the san pham (M3) dang tro toi; chi NGUNG de an khoi dropdown
     public void doiTrangThai(String loai, Long id) {
-        if (id == null) throw new NghiepVuException("Thiếu mã thuộc tính");
         switch (loai) {
-            case "chat-lieu": {
-                ChatLieu c = chatLieuRepo.timTheoId(id);
-                if (c == null) throw new NghiepVuException("Không tìm thấy chất liệu");
-                c.setTrangThai(lat(c.getTrangThai()));
-                chatLieuRepo.capNhat(c);
+            case MAU_SAC: {
+                MauSac x = mauRepo.timTheoId(id);
+                if (x == null) throw new NghiepVuException("Không tìm thấy màu sắc");
+                x.setTrangThai(daoTrangThai(x.getTrangThai()));
+                mauRepo.capNhat(x);
                 break;
             }
-            case "khoi-luong": {
-                KhoiLuong k = khoiLuongRepo.timTheoId(id);
-                if (k == null) throw new NghiepVuException("Không tìm thấy khối lượng");
-                k.setTrangThai(lat(k.getTrangThai()));
-                khoiLuongRepo.capNhat(k);
+            case CHAT_LIEU: {
+                ChatLieu x = chatLieuRepo.timTheoId(id);
+                if (x == null) throw new NghiepVuException("Không tìm thấy chất liệu");
+                x.setTrangThai(daoTrangThai(x.getTrangThai()));
+                chatLieuRepo.capNhat(x);
                 break;
             }
-            case "chu-vi": {
-                ChuViTayCam c = chuViRepo.timTheoId(id);
-                if (c == null) throw new NghiepVuException("Không tìm thấy chu vi");
-                c.setTrangThai(lat(c.getTrangThai()));
-                chuViRepo.capNhat(c);
+            case KHOI_LUONG: {
+                KhoiLuong x = khoiLuongRepo.timTheoId(id);
+                if (x == null) throw new NghiepVuException("Không tìm thấy khối lượng");
+                x.setTrangThai(daoTrangThai(x.getTrangThai()));
+                khoiLuongRepo.capNhat(x);
                 break;
             }
-            default: {
-                MauSac m = mauSacRepo.timTheoId(id);
-                if (m == null) throw new NghiepVuException("Không tìm thấy màu sắc");
-                m.setTrangThai(lat(m.getTrangThai()));
-                mauSacRepo.capNhat(m);
+            case CHU_VI: {
+                ChuViTayCam x = chuViRepo.timTheoId(id);
+                if (x == null) throw new NghiepVuException("Không tìm thấy chu vi tay cầm");
+                x.setTrangThai(daoTrangThai(x.getTrangThai()));
+                chuViRepo.capNhat(x);
+                break;
             }
+            default:
+                throw new NghiepVuException("Loại thuộc tính không hợp lệ");
         }
     }
 
-    private String lat(String trangThai) {
-        return "HOAT_DONG".equals(trangThai) ? "NGUNG" : "HOAT_DONG";
+    private String daoTrangThai(String hienTai) {
+        return "HOAT_DONG".equals(hienTai) ? "NGUNG" : "HOAT_DONG";
     }
 }

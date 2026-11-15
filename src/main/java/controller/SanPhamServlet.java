@@ -1,52 +1,99 @@
 package controller;
 
-import dto.BoLoc;
-import entity.SanPham;
+import dto.SanPhamLocDTO;
+import exception.NghiepVuException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import repository.SanPhamRepository;
+import service.DanhMucService;
+import service.SanPhamService;
+import service.ThuocTinhService;
+import service.ThuongHieuService;
+import util.DocSoUtil;
 
 import java.io.IOException;
 
 /**
- * Danh sach san pham: /wp-admin/san-pham  (module M3).
- * Bang lien quan: SanPham (+ DanhMuc, ThuongHieu de hien ten).
- * Da lam: tim kiem, loc theo loai, bat / tat hien thi.
- * TODO: form them / sua san pham (tenSanPham <= 200, duongDan khong trung, moTaNgan <= 500).
+ * Quan ly san pham (M3): /wp-admin/san-pham
+ * GET: danh sach (tim kiem + loc + sap xep + phan trang) hoac form them / sua.
+ * POST: luu, doiHienThi, ngungKinhDoanh, xoa.
  */
 @WebServlet("/wp-admin/san-pham")
 public class SanPhamServlet extends BaseServlet {
 
-    private final SanPhamRepository sanPhamRepo = new SanPhamRepository();
+    private final SanPhamService service = new SanPhamService();
+    private final DanhMucService danhMucService = new DanhMucService();           // M2: du lieu dropdown
+    private final ThuongHieuService thuongHieuService = new ThuongHieuService();  // M2
+    private final ThuocTinhService thuocTinhService = new ThuocTinhService();     // M2
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        BoLoc loc = new BoLoc()
-                .cotTim("tenSanPham")
-                .tuKhoa(docChuoi(req, "tuKhoa"))
-                .cotTrangThai("loaiSanPham")          // o day "trangThai" tren form chinh la loai san pham: VOT / BONG / PHU_KIEN / TUI
-                .trangThai(docChuoi(req, "loai"))
-                .trang(docSo(req, "trang", 1))
-                .kichThuoc(10);
-        req.setAttribute("pt", sanPhamRepo.timKiem(loc));
-        req.setAttribute("duongDan", "/wp-admin/san-pham");
+        String hanhDong = docChuoi(req, "hanhDong");
+
+        // ---- form them / sua ----
+        if (hanhDong.equals("them") || hanhDong.equals("sua")) {
+            req.setAttribute("sanPham", service.layTheoId(docLong(req, "id")));      // null khi them moi
+            req.setAttribute("danhSachDanhMuc", danhMucService.layDanhMucDangHoatDong());
+            req.setAttribute("danhSachThuongHieu", thuongHieuService.layDangHoatDong());
+            hienThi(req, resp, "san-pham/form", "san-pham", hanhDong.equals("them") ? "Thêm sản phẩm" : "Sửa sản phẩm");
+            return;
+        }
+
+        // ---- danh sach: doc cac dieu kien loc tu URL ----
+        SanPhamLocDTO loc = new SanPhamLocDTO();
+        try {
+            loc.setTuKhoa(docChuoi(req, "tuKhoa"));
+            loc.setMaDanhMuc(docLong(req, "maDanhMuc"));
+            loc.setMaThuongHieu(docLong(req, "maThuongHieu"));
+            loc.setMaMauSac(docLong(req, "maMauSac"));
+            loc.setMaKhoiLuong(docLong(req, "maKhoiLuong"));
+            loc.setGiaTu(DocSoUtil.soThapPhan(docChuoi(req, "giaTu"), "Giá từ"));
+            loc.setGiaDen(DocSoUtil.soThapPhan(docChuoi(req, "giaDen"), "Giá đến"));
+            String ht = docChuoi(req, "dangHienThi");
+            loc.setDangHienThi(ht.equals("1") ? Boolean.TRUE : ht.equals("0") ? Boolean.FALSE : null);
+            loc.setTinhTrangTon(docChuoi(req, "tinhTrangTon"));
+            if (!docChuoi(req, "sapXep").isEmpty()) loc.setSapXep(docChuoi(req, "sapXep"));
+            loc.setTrang(docSo(req, "trang", 1));
+        } catch (NghiepVuException e) {
+            // nhap sai o gia thi bao loi va bo qua bo loc gia
+            req.setAttribute("flashNoiDung", e.getMessage());
+            req.setAttribute("flashLoai", "loi");
+            loc.setGiaTu(null);
+            loc.setGiaDen(null);
+        }
+        req.setAttribute("loc", loc);
+        req.setAttribute("ketQua", service.timKiem(loc));
+        req.setAttribute("danhSachDanhMuc", danhMucService.layDanhMucDangHoatDong());
+        req.setAttribute("danhSachThuongHieu", thuongHieuService.layDangHoatDong());
+        req.setAttribute("danhSachMauSac", thuocTinhService.layDangHoatDong(ThuocTinhService.MAU_SAC));
+        req.setAttribute("danhSachKhoiLuong", thuocTinhService.layDangHoatDong(ThuocTinhService.KHOI_LUONG));
         hienThi(req, resp, "san-pham/danh-sach", "san-pham", "Sản phẩm");
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        // note code nhu nay nhe ban: "ngung ban thay vi xoa" - chi an san pham khoi storefront, khong xoa cung (vi con hoa don tham chieu)
-        if ("an-hien".equals(docChuoi(req, "hanhDong"))) {
-            SanPham sp = sanPhamRepo.timTheoId(docLong(req, "id"));
-            if (sp != null) {
-                sp.setDangHienThi(!Boolean.TRUE.equals(sp.getDangHienThi()));
-                sanPhamRepo.capNhat(sp);
-                chuyenHuong(req, resp, "/wp-admin/san-pham", sp.getDangHienThi() ? "Đã hiện sản phẩm" : "Đã ẩn sản phẩm");
-                return;
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String hanhDong = docChuoi(req, "hanhDong");
+        try {
+            if (hanhDong.equals("luu")) {
+                service.luu(docLong(req, "id"), docChuoi(req, "tenSanPham"), docLong(req, "maDanhMuc"), docLong(req, "maThuongHieu"),
+                        docChuoi(req, "loaiSanPham"), docChuoi(req, "moTaNgan"), docChuoi(req, "moTa"),
+                        "1".equals(req.getParameter("dangHienThi")), taiKhoan(req).getId());
+                chuyenHuong(req, resp, "/wp-admin/san-pham", "Lưu sản phẩm thành công");
+            } else if (hanhDong.equals("doiHienThi")) {
+                service.doiHienThi(docLong(req, "id"));
+                chuyenHuong(req, resp, "/wp-admin/san-pham", "Đã đổi trạng thái hiển thị");
+            } else if (hanhDong.equals("ngungKinhDoanh")) {
+                service.ngungKinhDoanh(docLong(req, "id"));
+                chuyenHuong(req, resp, "/wp-admin/san-pham", "Đã ngừng kinh doanh sản phẩm và các biến thể");
+            } else if (hanhDong.equals("xoa")) {
+                service.xoa(docLong(req, "id"));
+                chuyenHuong(req, resp, "/wp-admin/san-pham", "Đã xóa sản phẩm");
+            } else {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
+        } catch (NghiepVuException e) {
+            chuyenHuongLoi(req, resp, "/wp-admin/san-pham", e.getMessage());
         }
-        chuyenHuongLoi(req, resp, "/wp-admin/san-pham", "Không tìm thấy sản phẩm");
     }
 }

@@ -1,39 +1,62 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="/trang-chu-backend/layout/header.jspf" %>
-<form class="toolbar" method="get" action="${ctx}/wp-admin/san-pham">
-    <input class="grow" type="text" name="tuKhoa" value="<c:out value='${param.tuKhoa}'/>" placeholder="Tìm tên sản phẩm...">
-    <select name="loai">
-        <option value="">Tất cả loại</option>
-        <c:forTokens items="VOT,BONG,PHU_KIEN,TUI" delims="," var="t">
-            <option value="${t}" ${param.loai == t ? 'selected' : ''}>${ph:nhan(t)}</option>
-        </c:forTokens>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%-- M3 (Phat): danh sach san pham. Servlet gui sang: ketQua (PhanTrang<SanPhamDongDTO>), loc, danhSachDanhMuc, danhSachThuongHieu, danhSachMauSac, danhSachKhoiLuong --%>
+<form method="get" action="${pageContext.request.contextPath}/wp-admin/san-pham">
+    <input name="tuKhoa" value="${loc.tuKhoa}" placeholder="Tên hoặc mã hàng (SKU)">
+    <select name="maDanhMuc"><option value="">-- Danh mục --</option>
+        <c:forEach var="d" items="${danhSachDanhMuc}"><option value="${d.maDanhMuc}" ${loc.maDanhMuc == d.maDanhMuc ? 'selected' : ''}>${d.tenDanhMuc}</option></c:forEach>
     </select>
-    <button class="btn" type="submit">Lọc</button>
-    <%-- TODO: nut "Them san pham" tro toi form them san pham --%>
+    <select name="maThuongHieu"><option value="">-- Thương hiệu --</option>
+        <c:forEach var="t" items="${danhSachThuongHieu}"><option value="${t.maThuongHieu}" ${loc.maThuongHieu == t.maThuongHieu ? 'selected' : ''}>${t.tenThuongHieu}</option></c:forEach>
+    </select>
+    <input name="giaTu" value="${loc.giaTu}" placeholder="Giá từ" size="10">
+    <input name="giaDen" value="${loc.giaDen}" placeholder="Giá đến" size="10">
+    <select name="tinhTrangTon">
+        <option value="">-- Tồn kho --</option>
+        <option value="HET" ${loc.tinhTrangTon == 'HET' ? 'selected' : ''}>Hết hàng</option>
+        <option value="SAP_HET" ${loc.tinhTrangTon == 'SAP_HET' ? 'selected' : ''}>Sắp hết</option>
+        <option value="CON" ${loc.tinhTrangTon == 'CON' ? 'selected' : ''}>Còn hàng</option>
+    </select>
+    <select name="sapXep">
+        <option value="moi" ${loc.sapXep == 'moi' ? 'selected' : ''}>Mới nhất</option>
+        <option value="ten" ${loc.sapXep == 'ten' ? 'selected' : ''}>Tên A-Z</option>
+        <option value="gia_tang" ${loc.sapXep == 'gia_tang' ? 'selected' : ''}>Giá tăng dần</option>
+        <option value="gia_giam" ${loc.sapXep == 'gia_giam' ? 'selected' : ''}>Giá giảm dần</option>
+    </select>
+    <button>Lọc</button>
+    <a href="${pageContext.request.contextPath}/wp-admin/san-pham?hanhDong=them">+ Thêm sản phẩm</a>
 </form>
-<div class="card table-wrap" style="padding:0">
-    <table class="tbl">
-        <tr><th>Sản phẩm</th><th>Danh mục</th><th>Thương hiệu</th><th>Loại</th><th>Hiển thị</th><th></th></tr>
-        <c:forEach items="${pt.danhSach}" var="s">
+<br>
+<c:if test="${empty ketQua.danhSach}"><p>Không có sản phẩm nào phù hợp.</p></c:if>
+<c:if test="${not empty ketQua.danhSach}">
+    <table>
+        <tr><th>Ảnh</th><th>Tên sản phẩm</th><th>Thương hiệu</th><th>Danh mục</th><th>Giá</th><th>Biến thể</th><th>Tồn</th><th>Hiển thị</th><th></th></tr>
+        <c:forEach var="d" items="${ketQua.danhSach}">
             <tr>
-                <td><b>${s.tenSanPham}</b><br><span class="muted">${s.duongDan}</span></td>
-                <td>${s.danhMuc.tenDanhMuc}</td>
-                <td>${s.thuongHieu.tenThuongHieu}</td>
-                <td>${ph:nhan(s.loaiSanPham)}</td>
-                <td><span class="badge ${s.dangHienThi ? 'HOAT_DONG' : 'NGUNG'}">${s.dangHienThi ? 'Đang hiện' : 'Đang ẩn'}</span></td>
-                <td class="nowrap">
-                    <a class="btn sm line" href="${ctx}/wp-admin/san-pham/chi-tiet?id=${s.maSanPham}">Chi tiết</a>
-                    <c:if test="${!laNhanVien}">
-                        <form class="inline" method="post" action="${ctx}/wp-admin/san-pham">
-                            <input type="hidden" name="hanhDong" value="an-hien"><input type="hidden" name="id" value="${s.maSanPham}">
-                            <button class="btn sm" type="submit">${s.dangHienThi ? 'Ẩn' : 'Hiện'}</button>
-                        </form>
-                    </c:if>
+                <td><img src="${d.anhChinh.startsWith('/') ? pageContext.request.contextPath.concat(d.anhChinh) : d.anhChinh}" width="48"></td>
+                <td><a href="${pageContext.request.contextPath}/wp-admin/san-pham/chi-tiet?maSanPham=${d.sanPham.maSanPham}">${d.sanPham.tenSanPham}</a></td>
+                <td>${d.sanPham.thuongHieu.tenThuongHieu}</td>
+                <td>${d.sanPham.danhMuc.tenDanhMuc}</td>
+                <td><c:choose><c:when test="${d.giaThapNhat == null}">Chưa có</c:when>
+                    <c:otherwise><fmt:formatNumber value="${d.giaThapNhat}" pattern="#,###"/> - <fmt:formatNumber value="${d.giaCaoNhat}" pattern="#,###"/></c:otherwise></c:choose></td>
+                <td>${d.soBienThe}</td>
+                <td>${d.tongTon}</td>
+                <td>${d.sanPham.dangHienThi ? 'Đang bán' : 'Đã ẩn'}</td>
+                <td>
+                    <a href="${pageContext.request.contextPath}/wp-admin/san-pham?hanhDong=sua&id=${d.sanPham.maSanPham}">Sửa</a>
+                    <form method="post" action="${pageContext.request.contextPath}/wp-admin/san-pham" style="display:inline" onsubmit="return confirm('Ngừng kinh doanh sản phẩm này và mọi biến thể?')">
+                        <input type="hidden" name="hanhDong" value="ngungKinhDoanh"><input type="hidden" name="id" value="${d.sanPham.maSanPham}">
+                        <button>Ngừng KD</button>
+                    </form>
+                    <form method="post" action="${pageContext.request.contextPath}/wp-admin/san-pham" style="display:inline" onsubmit="return confirm('Xóa sản phẩm này?')">
+                        <input type="hidden" name="hanhDong" value="xoa"><input type="hidden" name="id" value="${d.sanPham.maSanPham}">
+                        <button>Xóa</button>
+                    </form>
                 </td>
             </tr>
         </c:forEach>
-        <c:if test="${empty pt.danhSach}"><tr><td colspan="6" class="empty">Không có sản phẩm</td></tr></c:if>
     </table>
-</div>
-<%@ include file="/trang-chu-backend/layout/phan-trang.jspf" %>
+    <p>Trang ${ketQua.trangHienTai} / ${ketQua.tongTrang} - ${ketQua.tongSo} sản phẩm</p>
+</c:if>
 <%@ include file="/trang-chu-backend/layout/footer.jspf" %>

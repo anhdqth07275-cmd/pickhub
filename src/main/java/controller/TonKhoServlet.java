@@ -1,40 +1,46 @@
 package controller;
 
-import dto.BoLoc;
+import exception.NghiepVuException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import repository.ChiTietSanPhamRepository;
+import service.TonKhoService;
 
 import java.io.IOException;
 
 /**
- * Ton kho: /wp-admin/ton-kho  (module M3).
- * Bang lien quan: ChiTietSanPham. Loc theo trang thai, tick "chi hien sap het" de xem canh bao.
- * TODO: form dieu chinh ton kho (soLuongTon >= 0; ton = 0 thi tu chuyen HET_HANG).
+ * Quan ly ton kho (M3): /wp-admin/ton-kho
+ * Xem ton theo tung bien the (loc het hang / sap het / con hang), kiem ke (dat lai so ton), nhap them hang.
  */
 @WebServlet("/wp-admin/ton-kho")
 public class TonKhoServlet extends BaseServlet {
 
-    private final ChiTietSanPhamRepository chiTietRepo = new ChiTietSanPhamRepository();
+    private final TonKhoService service = new TonKhoService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        BoLoc loc = new BoLoc()
-                .cotTim("maHang")
-                .tuKhoa(docChuoi(req, "tuKhoa"))
-                .cotTrangThai("trangThai")
-                .trangThai(docChuoi(req, "trangThai"))
-                .sapXep("x.soLuongTon asc")                 // it hang nhat len dau
-                .trang(docSo(req, "trang", 1))
-                .kichThuoc(10);
-
-        // note code nhu nay nhe ban: canh bao = ton <= nguong canh bao cua chinh bien the do
-        if ("1".equals(docChuoi(req, "canhBao"))) loc.dieuKienThem("x.soLuongTon <= x.nguongCanhBaoTonKho");
-
-        req.setAttribute("pt", chiTietRepo.timKiem(loc));
-        req.setAttribute("duongDan", "/wp-admin/ton-kho");
+        req.setAttribute("ketQua", service.timKiem(docChuoi(req, "tuKhoa"), docChuoi(req, "tinhTrang"), docSo(req, "trang", 1)));
+        req.setAttribute("soSapHet", service.demSapHet());      // hien canh bao tren dau trang
         hienThi(req, resp, "san-pham/ton-kho", "ton-kho", "Tồn kho");
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String hanhDong = docChuoi(req, "hanhDong");
+        try {
+            if (hanhDong.equals("kiemKe")) {
+                // so ton nhap sai (chu, rong) -> -1 de bi chan o service
+                service.capNhatTon(docLong(req, "id"), docSo(req, "soLuong", -1));
+                chuyenHuong(req, resp, "/wp-admin/ton-kho", "Đã cập nhật số lượng tồn");
+            } else if (hanhDong.equals("nhapThem")) {
+                service.nhapThem(docLong(req, "id"), docSo(req, "soLuong", 0));
+                chuyenHuong(req, resp, "/wp-admin/ton-kho", "Đã nhập thêm hàng vào kho");
+            } else {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            }
+        } catch (NghiepVuException e) {
+            chuyenHuongLoi(req, resp, "/wp-admin/ton-kho", e.getMessage());
+        }
     }
 }
