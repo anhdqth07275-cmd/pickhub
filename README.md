@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # PickHub POS – Bán hàng tại quầy (Java Servlet/JSP, MVC thuần)
 
 Hệ thống bán hàng tại quầy cho cửa hàng vợt và phụ kiện Pickleball. Java 11+, Servlet/JSP (Jakarta, Tomcat 10+), Hibernate 5.6, SQL Server.
@@ -89,3 +90,6 @@ Quy ước: không khai báo lớp / phương thức generic (`<T>`), mỗi enti
 
 ## 8. Lưu ý trung thực
 Mã nguồn đã được kiểm tra biên dịch bằng `javac` với bản giả lập thư viện, **chưa chạy thử trên Tomcat + SQL Server thật** (môi trường tạo project không có). Nếu gặp lỗi Hibernate / EL khi chạy lần đầu, gửi thông báo lỗi để chỉnh tiếp.
+=======
+ccho quang anh 
+>>>>>>> 93db8e994ff3b38cedfa6ef520e1854f7f93cabd
