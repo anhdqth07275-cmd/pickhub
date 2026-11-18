@@ -1,0 +1,15 @@
+package com.pickhub.service;
+
+import com.pickhub.dto.KetQuaPhieuDTO;
+
+import java.math.BigDecimal;
+
+/** Kiem tra va tinh tien giam cua phieu giam gia. */
+public interface IPhieuGiamGiaService extends IBaseService {
+
+    /**
+     * Kiem tra ma giam gia tren tam tinh cua hoa don. Hop le tra ve phieu + so tien giam, khong hop le nem NghiepVuException.
+     * LUU Y: kiem tra GIOI HAN SO LAN / SO LUONG SU DUNG dang TAM TAT (xem PhieuGiamGiaServiceImpl).
+     */
+    KetQuaPhieuDTO tinhGiam(String maGiamGia, BigDecimal tamTinh);
+}

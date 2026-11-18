@@ -26,9 +26,9 @@
         <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
         Dashboard</a>
 
-    <a class="nav-item ${menu == 'tai-quay' ? 'active' : ''}" href="${ctx}/wp-admin/ban-hang-tai-quay">
-        <svg class="ic" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-        Bán hàng tại quầy <span class="soon-tag">Sắp ra mắt</span></a>
+<%--    <a class="nav-item ${menu == 'tai-quay' ? 'active' : ''}" href="${ctx}/wp-admin/ban-hang-tai-quay">--%>
+<%--        <svg class="ic" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>--%>
+<%--        Bán hàng tại quầy <span class="soon-tag">Sắp ra mắt</span></a>--%>
 
     <details class="nav-group" ${moNhomSP ? 'open' : ''}>
         <summary>
@@ -57,9 +57,9 @@
             Quản lý nhân viên</a>
     </c:if>
 
-    <a class="nav-item ${menu == 'khach-hang' ? 'active' : ''}" href="${ctx}/wp-admin/khach-hang">
-        <svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-3.5 3-5.5 6.5-5.5s6 2 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14.5c2.5 0 4 1.5 4.5 4.5"/></svg>
-        Quản lý khách hàng</a>
+<%--    <a class="nav-item ${menu == 'khach-hang' ? 'active' : ''}" href="${ctx}/wp-admin/khach-hang">--%>
+<%--        <svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-3.5 3-5.5 6.5-5.5s6 2 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14.5c2.5 0 4 1.5 4.5 4.5"/></svg>--%>
+<%--        Quản lý khách hàng</a>--%>
 
     <c:if test="${!laNhanVien}">
         <details class="nav-group" ${moNhomGiamGia ? 'open' : ''}>

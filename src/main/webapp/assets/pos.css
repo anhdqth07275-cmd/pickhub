@@ -1,0 +1,149 @@
+/* ===== PickHub POS - giao dien ban hang tai quay ===== */
+:root { --navy: #1e293b; --navy-2: #0f172a; --lime: #ccff00; --lime-d: #b5e600; --bg: #eef1f6; --line: #e2e8f0; --muted: #64748b; --bad: #dc2626; --ok: #16a34a; --warn: #d97706; --blue: #2563eb; }
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--navy); font-size: 14.5px; }
+a { color: inherit; text-decoration: none; }
+button, input, select { font: inherit; }
+input, select { padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 9px; background: #fff; color: var(--navy); width: 100%; }
+input:focus, select:focus { outline: 2px solid var(--blue); border-color: transparent; }
+.btn { border: 0; border-radius: 10px; padding: 9px 16px; font-weight: 700; cursor: pointer; background: var(--navy); color: #fff; }
+.btn.lime { background: var(--lime); color: var(--navy); }
+.btn.lime:hover { background: var(--lime-d); }
+.btn.line { background: #fff; color: var(--navy); border: 1px solid #cbd5e1; }
+.btn.sm { padding: 5px 10px; font-size: 13px; border-radius: 8px; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.muted { color: var(--muted); }
+
+/* ---------- khung ---------- */
+.pos { height: 100vh; display: flex; flex-direction: column; }
+.pos-top { background: var(--navy); color: #fff; display: flex; align-items: center; gap: 18px; padding: 8px 16px; flex: none; }
+.logo { font-weight: 900; font-size: 22px; letter-spacing: -.4px; }
+.logo span { background: var(--lime); color: var(--navy); border-radius: 7px; padding: 0 7px; margin-left: 2px; }
+.pos-top .ca { margin-left: 8px; background: rgba(255,255,255,.08); border-radius: 10px; padding: 5px 12px; font-size: 13px; }
+.pos-top .ca b { color: var(--lime); }
+.pos-top .phai { margin-left: auto; display: flex; align-items: center; gap: 14px; font-size: 13.5px; }
+.pos-top .phai a { padding: 6px 12px; border-radius: 8px; background: rgba(255,255,255,.1); }
+.pos-top .phai a:hover { background: var(--lime); color: var(--navy); }
+.pos-body { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) 430px; gap: 12px; padding: 12px; min-height: 0; }
+.pos-left, .pos-right { background: #fff; border-radius: 14px; display: flex; flex-direction: column; min-height: 0; box-shadow: 0 1px 3px rgba(15,23,42,.08); }
+
+/* ---------- trai: tim kiem + loc + luoi ---------- */
+.o-tim { display: flex; gap: 8px; padding: 12px 12px 8px; }
+.o-tim input { font-size: 16px; padding: 11px 14px; border: 2px solid var(--navy); }
+.o-tim .btn { white-space: nowrap; }
+.bo-loc { display: none; padding: 0 12px 10px; }
+.bo-loc.mo { display: block; }
+.bo-loc .luoi-loc { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.bo-loc label.chk { display: flex; align-items: center; gap: 6px; font-weight: 600; padding: 4px 0; }
+.bo-loc label.chk input { width: auto; }
+.chips-nhanh { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 12px 8px; }
+.chips-nhanh button { border: 1px solid #cbd5e1; background: #fff; border-radius: 99px; padding: 4px 12px; cursor: pointer; font-size: 13px; }
+.chips-nhanh button.on { background: var(--navy); color: var(--lime); border-color: var(--navy); }
+.dau-ds { display: flex; justify-content: space-between; align-items: center; padding: 2px 14px 6px; font-size: 13px; color: var(--muted); }
+.luoi { flex: 1; overflow-y: auto; padding: 4px 12px 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 10px; align-content: start; }
+.the { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; cursor: pointer; background: #fff; position: relative; display: flex; flex-direction: column; transition: box-shadow .12s, border-color .12s; }
+.the:hover { border-color: var(--navy); box-shadow: 0 4px 14px rgba(15,23,42,.14); }
+.the:active { transform: scale(.985); }
+.the.het { opacity: .5; cursor: not-allowed; }
+.the .anh { aspect-ratio: 4/3; background: #eef1f6; }
+.the .anh img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.the .km { position: absolute; top: 6px; left: 6px; background: var(--bad); color: #fff; font-weight: 800; font-size: 12px; border-radius: 6px; padding: 2px 7px; }
+.the .ton { position: absolute; top: 6px; right: 6px; font-size: 11.5px; font-weight: 800; border-radius: 6px; padding: 2px 7px; background: #dcfce7; color: #166534; }
+.the .ton.it { background: #ffedd5; color: #9a3412; }
+.the .ton.het { background: #fee2e2; color: #991b1b; }
+.the .tt { padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 3px; }
+.the .ten { font-weight: 700; font-size: 13.5px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 35px; }
+.the .mo-ta { font-size: 12px; color: var(--muted); min-height: 16px; }
+.the .sku { font-family: Consolas, monospace; font-size: 11.5px; color: #475569; }
+.the .gia { font-weight: 800; color: var(--bad); font-size: 15px; }
+.the .gia s { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: 5px; }
+.rong { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 40px 10px; }
+.phan-trang { display: flex; gap: 5px; justify-content: center; padding: 8px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.phan-trang button { min-width: 34px; height: 34px; border: 1px solid #cbd5e1; background: #fff; border-radius: 8px; cursor: pointer; font-weight: 700; }
+.phan-trang button.on { background: var(--navy); color: var(--lime); border-color: var(--navy); }
+
+/* ---------- phai: hoa don ---------- */
+.tabs-hd { display: flex; gap: 4px; padding: 8px 8px 0; overflow-x: auto; border-bottom: 1px solid var(--line); flex: none; }
+.tabs-hd .tab { display: flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 9px 9px 0 0; background: #f1f5f9; cursor: pointer; white-space: nowrap; font-weight: 600; font-size: 13.5px; }
+.tabs-hd .tab.on { background: var(--navy); color: var(--lime); }
+.tabs-hd .tab .dem { background: var(--lime); color: var(--navy); border-radius: 99px; padding: 0 7px; font-size: 12px; }
+.tabs-hd .tab .dong { opacity: .6; padding: 0 2px; }
+.tabs-hd .tab .dong:hover { opacity: 1; }
+.tabs-hd .them { padding: 7px 12px; border-radius: 9px 9px 0 0; background: #e2e8f0; cursor: pointer; font-weight: 800; }
+.dong-hd { flex: 1; overflow-y: auto; padding: 6px 10px; min-height: 90px; }
+.dong-hd .trong { text-align: center; color: var(--muted); padding: 34px 10px; }
+.mh { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 9px 4px; border-bottom: 1px dashed var(--line); }
+.mh .ten { font-weight: 700; font-size: 13.5px; }
+.mh .phu { font-size: 12px; color: var(--muted); }
+.mh .tien { text-align: right; font-weight: 800; }
+.mh .dieu-khien { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; }
+.stepper { display: inline-flex; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; }
+.stepper button { width: 30px; border: 0; background: #f1f5f9; font-size: 17px; cursor: pointer; }
+.stepper button:hover { background: var(--lime); }
+.stepper input { width: 52px; border: 0; border-radius: 0; text-align: center; padding: 5px 2px; }
+.mh .xoa { margin-left: auto; color: var(--bad); cursor: pointer; border: 0; background: none; font-weight: 700; }
+.mh .don-gia { font-size: 12.5px; color: var(--muted); }
+.tong-ket { padding: 8px 14px; border-top: 1px solid var(--line); flex: none; }
+.phieu { display: flex; gap: 6px; margin-bottom: 8px; }
+.phieu input { text-transform: uppercase; }
+.phieu-ok { background: #dcfce7; color: #166534; border-radius: 8px; padding: 6px 10px; font-weight: 700; font-size: 13px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+.dong-tien { display: flex; justify-content: space-between; padding: 3px 0; }
+.dong-tien.tong { font-size: 22px; font-weight: 900; padding-top: 8px; border-top: 1px solid var(--line); margin-top: 4px; }
+.dong-tien.tong span:last-child { color: var(--bad); }
+.thanh-toan { padding: 8px 14px 14px; border-top: 1px solid var(--line); flex: none; background: #f8fafc; border-radius: 0 0 14px 14px; }
+.pt-chon { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
+.pt-chon button { border: 2px solid #cbd5e1; background: #fff; border-radius: 10px; padding: 8px 4px; font-weight: 700; cursor: pointer; }
+.pt-chon button.on { border-color: var(--navy); background: var(--lime); }
+.tien-dua .hang { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+.tien-dua .hang label { min-width: 92px; font-weight: 600; }
+.nhanh-tien { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 6px; }
+.nhanh-tien button { border: 1px solid #cbd5e1; background: #fff; border-radius: 8px; padding: 4px 9px; cursor: pointer; font-size: 12.5px; font-weight: 600; }
+.nhanh-tien button:hover { background: var(--lime); }
+.tien-thua { font-weight: 800; }
+.tien-thua.thieu { color: var(--bad); }
+.tien-thua.du { color: var(--ok); }
+details.them-tt { margin-bottom: 8px; }
+details.them-tt summary { cursor: pointer; color: var(--muted); font-weight: 600; }
+details.them-tt .luoi-tt { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
+details.them-tt input.rong2 { grid-column: 1 / -1; }
+.btn-tra { width: 100%; padding: 14px; font-size: 17px; border-radius: 12px; }
+.phim-tat { font-size: 11.5px; color: var(--muted); text-align: center; margin-top: 6px; }
+
+/* ---------- modal thanh cong ---------- */
+.lop-phu { position: fixed; inset: 0; background: rgba(15,23,42,.55); display: none; place-items: center; z-index: 60; }
+.lop-phu.mo { display: grid; }
+.hop { background: #fff; border-radius: 16px; padding: 26px 30px; width: 400px; max-width: 94vw; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,.35); }
+.hop .tick { width: 66px; height: 66px; border-radius: 50%; background: var(--lime); display: grid; place-items: center; font-size: 34px; margin: 0 auto 10px; }
+.hop h2 { margin: 0 0 4px; }
+.hop .so { font-size: 15px; margin: 4px 0; }
+.hop .so b { font-size: 20px; }
+.hop .nut { display: grid; gap: 8px; margin-top: 16px; }
+#toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 22px; background: var(--navy); color: #fff; padding: 11px 20px; border-radius: 10px; display: none; font-weight: 600; z-index: 80; max-width: 90vw; box-shadow: 0 8px 24px rgba(15,23,42,.35); }
+#toast.loi { background: var(--bad); }
+
+/* ---------- trang phu (hoa don, dang nhap) ---------- */
+.trang { max-width: 1180px; margin: 0 auto; padding: 18px; }
+.the-trang { background: #fff; border-radius: 14px; padding: 18px; box-shadow: 0 1px 3px rgba(15,23,42,.08); margin-bottom: 14px; }
+.bang { width: 100%; border-collapse: collapse; }
+.bang th { text-align: left; color: var(--muted); font-size: 13px; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+.bang td { padding: 10px; border-bottom: 1px solid var(--line); }
+.bang .so { text-align: right; white-space: nowrap; }
+.thong-ke { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 14px; }
+.thong-ke .o { background: #fff; border-radius: 14px; padding: 16px 20px; }
+.thong-ke .o b { display: block; font-size: 26px; }
+.loc-hd { display: flex; gap: 8px; flex-wrap: wrap; align-items: end; }
+.loc-hd > div { min-width: 150px; }
+.loc-hd label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 3px; }
+.badge { display: inline-block; background: #dcfce7; color: #166534; border-radius: 99px; padding: 2px 10px; font-size: 12.5px; font-weight: 700; }
+.dang-nhap { display: grid; place-items: center; min-height: 100vh; background: linear-gradient(135deg, var(--navy-2), var(--navy)); }
+.dang-nhap form { background: #fff; border-radius: 18px; padding: 32px 34px; width: 380px; max-width: 92vw; }
+.dang-nhap h1 { margin: 0 0 4px; }
+.dang-nhap input { margin-bottom: 12px; padding: 11px 13px; }
+.loi-box { background: #fee2e2; color: #991b1b; border-radius: 10px; padding: 9px 12px; margin-bottom: 12px; font-weight: 600; }
+
+@media (max-width: 1000px) {
+    .pos { height: auto; }
+    .pos-body { grid-template-columns: 1fr; }
+    .pos-left .luoi { max-height: 60vh; }
+}

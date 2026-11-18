@@ -1,11 +1,4 @@
 target/
 .idea/
 *.iml
-src/main/resources/mail.properties
-*.log
-# Hệ điều hành (Windows / macOS)
-Thumbs.db
-.DS_Store
-
-# Ảnh upload test trong quá trình dev (nếu nhóm lưu ảnh trực tiếp vào webapp/assets/uploads)
- src/main/webapp/assets/uploads/
+out/
