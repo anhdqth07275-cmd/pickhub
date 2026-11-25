@@ -93,6 +93,19 @@ public class SanPhamServlet extends BaseServlet {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
         } catch (NghiepVuException e) {
+            // note code nhu nay nhe ban: luu loi (de trong ten, trung ten...) thi HIEN LAI FORM kem du lieu vua nhap,
+            // khong redirect ve danh sach vi nguoi dung se mat het nhung gi da go
+            if (hanhDong.equals("luu")) {
+                Long id = docLong(req, "id");
+                req.setAttribute("flashNoiDung", e.getMessage());
+                req.setAttribute("flashLoai", "loi");
+                req.setAttribute("giuDuLieu", Boolean.TRUE);                  // bao JSP lay gia tri tu param thay vi tu sanPham
+                req.setAttribute("sanPham", service.layTheoId(id));           // null khi dang them moi
+                req.setAttribute("danhSachDanhMuc", danhMucService.layDanhMucDangHoatDong());
+                req.setAttribute("danhSachThuongHieu", thuongHieuService.layDangHoatDong());
+                hienThi(req, resp, "san-pham/form", "san-pham", id == null ? "Thêm sản phẩm" : "Sửa sản phẩm");
+                return;
+            }
             chuyenHuongLoi(req, resp, "/wp-admin/san-pham", e.getMessage());
         }
     }

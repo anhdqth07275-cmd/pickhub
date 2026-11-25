@@ -34,7 +34,7 @@
 
 <div class="card table-wrap" style="padding:0">
     <table class="tbl">
-        <tr><th>Mã</th><th>Tên phiếu</th><th>Giảm</th><th class="num">Đơn tối thiểu</th><th class="num">Đã dùng / giới hạn</th><th>Thời gian</th><th>Trạng thái</th><th></th></tr>
+        <tr><th>Mã</th><th>Tên phiếu</th><th>Giảm</th><th class="num">Đơn tối thiểu</th><th class="num">Tổng lượt<br><span class="muted">đã dùng / tối đa</span></th><th class="num">Mỗi khách<br><span class="muted">tối đa</span></th><th>Thời gian</th><th>Trạng thái</th><th></th></tr>
         <c:forEach items="${pt.danhSach}" var="p">
             <tr>
                 <td class="code">${p.maGiamGia}</td>
@@ -42,10 +42,13 @@
                 <td><b>${ph:giamGia(p.loaiGiam, p.giaTriGiam)}</b><c:if test="${not empty p.giamToiDa}"><br><span class="muted">tối đa ${ph:tien(p.giamToiDa)}</span></c:if></td>
                 <td class="num">${ph:tien(p.giaTriDonToiThieu)}</td>
                 <td class="num">${p.soLanDaSuDung} / ${empty p.gioiHanSuDung ? '∞' : p.gioiHanSuDung}</td>
+                <%-- note code nhu nay nhe ban: gioiHanMoiNguoi = so lan TOI DA 1 khach duoc dung phieu nay (PhieuGiamGia.gioiHanMoiNguoi) --%>
+                <td class="num"><b>${p.gioiHanMoiNguoi}</b> lần/khách</td>
                 <td class="nowrap">${ph:ngay(p.ngayBatDau)} → ${ph:ngay(p.ngayKetThuc)}</td>
                 <td><span class="badge ${p.trangThai}">${ph:nhan(p.trangThai)}</span></td>
                 <td class="nowrap">
                     <a class="btn sm line" href="${ctx}/wp-admin/phieu-giam-gia?hanhDong=form&id=${p.maPhieuGiamGia}">Sửa</a>
+                    <a class="btn sm line" href="${ctx}/wp-admin/phieu-giam-gia/su-dung?maPhieu=${p.maPhieuGiamGia}" title="Xem từng khách đã dùng mấy lần">Lượt dùng</a>
                         <%-- phieu HET_HAN thi khong con nut tam dung / chay lai --%>
                     <c:if test="${p.trangThai != 'HET_HAN'}">
                         <form class="inline" method="post" action="${ctx}/wp-admin/phieu-giam-gia">
@@ -57,7 +60,7 @@
                 </td>
             </tr>
         </c:forEach>
-        <c:if test="${empty pt.danhSach}"><tr><td colspan="8" class="empty">Không có phiếu giảm giá</td></tr></c:if>
+        <c:if test="${empty pt.danhSach}"><tr><td colspan="9" class="empty">Không có phiếu giảm giá</td></tr></c:if>
     </table>
 </div>
 <%@ include file="/trang-chu-backend/layout/phan-trang.jspf" %>

@@ -5,7 +5,9 @@ import org.hibernate.Session;
 import util.GiaoDich;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Repository cua bang ChiTietChuongTrinhKhuyenMai (M4). Da co san: timTheoId, layTatCa, dem, timKiem, luu, capNhat (ke thua BaseRepository).
@@ -91,5 +93,20 @@ public class ChiTietChuongTrinhKhuyenMaiRepository extends BaseRepository<ChiTie
             if (c != null) s.remove(c);
             return null;
         });
+    }
+
+    // note code nhu nay nhe ban: dem so san pham (bien the) cua NHIEU chuong trinh bang 1 cau truy van (group by) -
+    // de cot "So SP" o danh sach khong phai goi 1 query cho moi dong (tranh cham). key = ma chuong trinh, value = so san pham
+    public Map<Long, Long> demTheoCacChuongTrinh(List<Long> danhSachMa) {
+        Map<Long, Long> ketQua = new HashMap<>();
+        if (danhSachMa == null || danhSachMa.isEmpty()) return ketQua;
+        try (Session s = moSession()) {
+            for (Object[] dong : s.createQuery("select c.maChuongTrinhKhuyenMai, count(c) from ChiTietChuongTrinhKhuyenMai c "
+                    + "where c.maChuongTrinhKhuyenMai in (:ids) group by c.maChuongTrinhKhuyenMai", Object[].class)
+                    .setParameterList("ids", danhSachMa).list()) {
+                ketQua.put((Long) dong[0], (Long) dong[1]);
+            }
+        }
+        return ketQua;
     }
 }

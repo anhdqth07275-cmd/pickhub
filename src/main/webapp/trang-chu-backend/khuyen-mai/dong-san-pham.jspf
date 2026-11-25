@@ -1,0 +1,25 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%-- 1 DONG SAN PHAM trong bang "Tich chon san pham ap dung khuyen mai" (popup khuyen mai).
+     note code nhu nay nhe ban: file nay duoc dung o 2 noi de giao dien dong LUON GIONG NHAU:
+       1) danh-sach.jsp      : ve cac dong luc mo popup
+       2) ket-qua-tim.jsp    : ve cac dong khi go tim kiem (khuyen-mai.js lay doan HTML nay them vao bang)
+     Bien vao: d (dto.DongKhuyenMaiDTO). Moi o nhap dat ten theo ma bien the: loaiGiam_5, giaTri_5, soLuong_5
+     de KhuyenMaiServlet doc lai dung dong nao. Dong CHUA tich thi o nhap bi disabled (khong gui len server). --%>
+<c:set var="bt" value="${d.bienThe}"/>
+<tr class="km-dong${d.chon ? ' chon' : ''}" data-id="${bt.maChiTietSanPham}" data-gia="${bt.giaGoc.longValue()}" data-tim="<c:out value='${d.chuoiTim}'/>">
+    <td class="km-c-chon"><input type="checkbox" name="chon" value="${bt.maChiTietSanPham}" ${d.chon ? 'checked' : ''} aria-label="Chọn sản phẩm"></td>
+    <td class="km-c-sp">
+        <b><c:out value="${bt.sanPham.tenSanPham}"/></b>
+        <div class="km-phu"><c:out value="${bt.maHang}"/><c:if test="${not empty d.moTaBienThe}"> · <c:out value="${d.moTaBienThe}"/></c:if> · Tồn: ${bt.soLuongTon} · ${ph:nhan(bt.trangThai)}<c:if test="${d.soLuongDaBan > 0}"> · Đã bán theo KM: ${d.soLuongDaBan}</c:if></div>
+    </td>
+    <td class="num nowrap">${ph:tien(bt.giaGoc)}</td>
+    <td>
+        <div class="km-loai">
+            <label><input type="radio" name="loaiGiam_${bt.maChiTietSanPham}" value="PHAN_TRAM" ${d.loaiGiam != 'SO_TIEN' ? 'checked' : ''} ${d.chon ? '' : 'disabled'}><span title="Giảm theo phần trăm">%</span></label>
+            <label><input type="radio" name="loaiGiam_${bt.maChiTietSanPham}" value="SO_TIEN" ${d.loaiGiam == 'SO_TIEN' ? 'checked' : ''} ${d.chon ? '' : 'disabled'}><span title="Giảm số tiền cố định">đ</span></label>
+        </div>
+    </td>
+    <td><input class="km-giatri" type="number" name="giaTri_${bt.maChiTietSanPham}" step="any" min="0" value="<c:out value='${d.giaTriGiam}'/>" placeholder="Mức giảm" ${d.chon ? '' : 'disabled'}></td>
+    <td><input class="km-sl" type="number" name="soLuong_${bt.maChiTietSanPham}" min="1" value="<c:out value='${d.soLuongGioiHan}'/>" placeholder="Không giới hạn" ${d.chon ? '' : 'disabled'}></td>
+    <td class="num nowrap km-sau">—</td>
+</tr>

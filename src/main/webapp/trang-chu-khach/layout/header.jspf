@@ -12,6 +12,9 @@
     <title>${tieuDe} - PickHub</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${ctx}/assets/cua-hang.css">
+    <%-- note code nhu nay nhe ban: moi o <select> trong trang deu tu co thanh tim kiem (select-search.js + select-search.css). Tat 1 o: them data-no-search --%>
+    <link rel="stylesheet" href="${ctx}/assets/select-search.css">
+    <script src="${ctx}/assets/select-search.js" defer></script>
 </head>
 <body>
 <header class="top">

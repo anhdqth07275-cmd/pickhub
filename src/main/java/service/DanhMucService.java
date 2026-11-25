@@ -145,4 +145,24 @@ public class DanhMucService {
         }
         repo.capNhat(dm);
     }
+
+    // ---------------- XOA ----------------
+
+    /**
+     * XOA CUNG danh muc (chuc nang "Delete" cua CRUD).
+     * note code nhu nay nhe ban: chi cho xoa khi danh muc "trong" - khong co danh muc con va khong co san pham.
+     * Neu dang duoc dung thi bao loi va goi y dung nut "Ngung" (doiTrangThai) de an di thay vi xoa.
+     */
+    public void xoa(Long id) {
+        DanhMuc dm = repo.timTheoId(id);
+        if (dm == null) throw new NghiepVuException("Không tìm thấy danh mục");
+
+        long soCon = repo.demDanhMucCon(id, null);          // null = dem moi trang thai (ca danh muc con dang ngung)
+        if (soCon > 0) throw new NghiepVuException("Danh mục \"" + dm.getTenDanhMuc() + "\" đang có " + soCon + " danh mục con, hãy xóa hoặc chuyển danh mục con trước");
+
+        long soSanPham = repo.demSanPham(id);
+        if (soSanPham > 0) throw new NghiepVuException("Danh mục \"" + dm.getTenDanhMuc() + "\" đang có " + soSanPham + " sản phẩm nên không thể xóa. Hãy dùng nút \"Ngừng\" để ẩn danh mục");
+
+        repo.xoa(id);
+    }
 }

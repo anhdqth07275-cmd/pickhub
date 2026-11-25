@@ -18,6 +18,7 @@ import java.io.IOException;
 /**
  * API tim san pham cho man hinh ban hang (tra JSON): GET /pos/api/san-pham
  * Tham so loc: tuKhoa, danhMuc, thuongHieu, loai, mau, khoiLuong, chatLieu, chuVi, giaTu, giaDen, ton, km, sapXep, trang
+ * Them nhom=1: tra theo SAN PHAM (the san pham + cac bien the) thay vi theo tung bien the.
  * Rieng ?sku=MA_HANG: tim chinh xac 1 mat hang (dung khi quet ma vach / go ma roi Enter).
  */
 @WebServlet("/pos/api/san-pham")
@@ -60,7 +61,13 @@ public class PosSanPhamApiServlet extends HttpServlet {
                 boLoc.setSapXep(sapXep);
             }
             boLoc.setTrang(ServletUtil.docSo(yeuCau, "trang", 1));
-            ServletUtil.guiJson(phanHoi, 200, sanPhamService.timKiemBienThe(boLoc).toJson());
+            // note code nhu nay nhe ban: ?nhom=1 -> tra danh sach THEO SAN PHAM (moi san pham 1 the kem cac bien the, cho popup chon bien the);
+            // khong co ?nhom=1 -> van tra theo bien the nhu cu
+            if ("1".equals(ServletUtil.docChuoi(yeuCau, "nhom"))) {
+                ServletUtil.guiJson(phanHoi, 200, sanPhamService.timKiemSanPham(boLoc).toJson());
+            } else {
+                ServletUtil.guiJson(phanHoi, 200, sanPhamService.timKiemBienThe(boLoc).toJson());
+            }
         } catch (NghiepVuException loi) {
             ServletUtil.guiJson(phanHoi, 200, JsonUtil.loi(loi.getMessage()));
         } catch (RuntimeException loi) {

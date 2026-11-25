@@ -1,6 +1,7 @@
 package service;
 
 import dto.KetQuaPhieuDTO;
+import dto.ThongKeKhachDungPhieuDTO;
 import entity.PhieuGiamGia;
 import exception.NghiepVuException;
 import repository.PhieuGiamGiaRepository;
@@ -10,6 +11,8 @@ import util.DinhDangUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Nghiep vu phieu giam gia (module M4).
@@ -169,6 +172,26 @@ public class PhieuGiamGiaService {
         }
 
         return KetQuaPhieuDTO.hopLe(p, tinhSoTienGiam(p, tamTinh));
+    }
+
+    // =====================================================================
+    // 3. THONG KE LUOT DUNG THEO KHACH (hien o trang "Luot su dung phieu")
+    // =====================================================================
+
+    /**
+     * Moi khach da dung phieu nay may lan so voi gioi han moi nguoi (PhieuGiamGia.gioiHanMoiNguoi).
+     * Gioi han nay duoc ep o 2 cho: kiemTraVaTinhGiam (luc ap phieu) va SuDungPhieuService.ghiNhanSuDung (luc dat hang).
+     */
+    public List<ThongKeKhachDungPhieuDTO> thongKeTheoKhach(Long maPhieu) {
+        PhieuGiamGia p = phieuRepo.timTheoId(maPhieu);
+        if (p == null) throw new NghiepVuException("Không tìm thấy phiếu giảm giá");
+
+        List<ThongKeKhachDungPhieuDTO> ketQua = new ArrayList<ThongKeKhachDungPhieuDTO>();
+        for (Object[] dong : suDungRepo.thongKeTheoKhach(maPhieu)) {
+            ketQua.add(new ThongKeKhachDungPhieuDTO((Long) dong[0], (String) dong[1], (String) dong[2],
+                    ((Number) dong[3]).longValue(), p.getGioiHanMoiNguoi()));
+        }
+        return ketQua;
     }
 
     // tinh so tien giam cua 1 phieu tren tamTinh

@@ -23,10 +23,25 @@
             <input type="number" name="giamToiDa" min="0" value="${p.giamToiDa}"></div>
         <div><label>Giá trị đơn tối thiểu (đ)</label>
             <input type="number" name="giaTriDonToiThieu" min="0" value="${p.giaTriDonToiThieu}"></div>
-        <div><label>Giới hạn tổng lượt dùng <span class="muted">(để trống = không giới hạn)</span></label>
-            <input type="number" name="gioiHanSuDung" min="1" value="${p.gioiHanSuDung}"></div>
-        <div><label>Giới hạn mỗi khách * <span class="muted">(từ 1 trở lên)</span></label>
-            <input type="number" name="gioiHanMoiNguoi" min="1" value="${p.gioiHanMoiNguoi}" required></div>
+        <%-- note code nhu nay nhe ban: co 2 gioi han KHAC NHAU, tach rieng cho de nhin:
+             - Tong luot dung  : ca he thong cho phep toi da bao nhieu lan (de trong = khong gioi han)
+             - Moi khach       : 1 tai khoan khach hang duoc dung toi da bao nhieu lan (>= 1, bat buoc)
+             Ca 2 duoc kiem tra khi khach ap ma (PhieuGiamGiaService.kiemTraVaTinhGiam) va khi dat hang (SuDungPhieuService.ghiNhanSuDung) --%>
+        <div class="limit-box">
+            <h4>Giới hạn sử dụng</h4>
+            <p class="hint">Hệ thống kiểm tra cả hai giới hạn khi khách áp mã và khi đặt hàng.</p>
+            <div style="display:grid;gap:12px">
+                <div class="fld"><label>Giới hạn mỗi khách hàng * <span class="muted">(số lần 1 tài khoản được dùng mã này)</span></label>
+                    <input type="number" name="gioiHanMoiNguoi" min="1" value="${empty p.gioiHanMoiNguoi ? 1 : p.gioiHanMoiNguoi}" required></div>
+                <div class="fld"><label>Tổng lượt dùng toàn hệ thống <span class="muted">(để trống = không giới hạn)</span></label>
+                    <input type="number" name="gioiHanSuDung" min="1" value="${p.gioiHanSuDung}"></div>
+            </div>
+            <p class="hint" style="margin-top:10px">Ví dụ: tổng <b>100</b> lượt, mỗi khách <b>2</b> lần → mỗi tài khoản dùng tối đa 2 lần và cả hệ thống tối đa 100 lượt.<br>
+                Lượt đã hoàn (hủy đơn) không bị tính vào giới hạn. Bán tại quầy POS là khách lẻ nên chỉ kiểm tra giới hạn tổng.</p>
+            <c:if test="${not empty p.maPhieuGiamGia}">
+                <p style="margin:8px 0 0"><a class="btn sm line" href="${ctx}/wp-admin/phieu-giam-gia/su-dung?maPhieu=${p.maPhieuGiamGia}">Xem từng khách đã dùng mấy lần →</a></p>
+            </c:if>
+        </div>
         <div><label>Bắt đầu *</label><input type="datetime-local" name="ngayBatDau" value="${p.ngayBatDau}" required></div>
         <div><label>Kết thúc *</label><input type="datetime-local" name="ngayKetThuc" value="${p.ngayKetThuc}" required></div>
         <c:if test="${not empty p.maPhieuGiamGia}">

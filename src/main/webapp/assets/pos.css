@@ -147,3 +147,92 @@ details.them-tt input.rong2 { grid-column: 1 / -1; }
     .pos-body { grid-template-columns: 1fr; }
     .pos-left .luoi { max-height: 60vh; }
 }
+
+/* ---------- popup xem va chon voucher (yeu cau 6) ----------
+   note code nhu nay nhe ban: dung lai .lop-phu (nen mo toi) co san; chi them khung .hop-vc va the .vc cho tung voucher */
+.phieu #o-phieu { flex: 1; min-width: 0; }
+.hop-vc { background: #fff; border-radius: 16px; width: 580px; max-width: 94vw; max-height: 88vh; display: flex; flex-direction: column; gap: 10px; padding: 18px 20px; box-shadow: 0 20px 50px rgba(0,0,0,.35); }
+.vc-dau { display: flex; justify-content: space-between; align-items: center; }
+.vc-dau h2 { margin: 0; font-size: 19px; }
+.vc-dong { border: 0; background: #f1f5f9; border-radius: 8px; width: 32px; height: 32px; cursor: pointer; font-size: 15px; }
+.vc-dong:hover { background: var(--lime); }
+.vc-ghi-chu { font-size: 13px; color: var(--muted); }
+.vc-ds { overflow-y: auto; display: grid; gap: 10px; padding: 2px; }
+.vc { display: flex; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
+.vc-muc { flex: none; width: 96px; background: var(--navy); color: var(--lime); display: grid; place-content: center; text-align: center; padding: 8px; font-weight: 900; font-size: 23px; line-height: 1.1; }
+.vc-muc small { display: block; font-size: 11px; font-weight: 600; color: #cbd5e1; margin-top: 2px; }
+.vc-than { flex: 1; padding: 10px 12px; min-width: 0; }
+.vc-ten { font-weight: 800; }
+.vc-ma { display: inline-block; font-family: Consolas, monospace; background: #f1f5f9; border: 1px dashed #94a3b8; border-radius: 6px; padding: 1px 7px; font-size: 12.5px; margin-left: 6px; }
+.vc-mo-ta { font-size: 13px; color: #334155; margin: 5px 0 3px; }
+.vc-chi-tiet { margin: 4px 0 0; padding-left: 16px; font-size: 12.5px; color: var(--muted); }
+.vc-tiet-kiem { color: var(--ok); font-weight: 700; font-size: 13px; margin-top: 4px; }
+.vc-thieu { color: var(--warn); font-weight: 700; font-size: 13px; margin-top: 4px; }
+.vc-chon { flex: none; display: grid; place-items: center; padding: 0 12px; border-left: 1px dashed var(--line); min-width: 84px; }
+.vc-chon .btn { padding: 7px 14px; }
+.vc.khoa { background: #f8fafc; }
+.vc.khoa .vc-muc { background: #64748b; color: #fff; }
+.vc.khoa .vc-ten { color: #475569; }
+.vc.dang-ap { border-color: var(--ok); box-shadow: 0 0 0 2px #bbf7d0; }
+.vc.dang-ap .vc-chon .btn { background: #dcfce7; color: #166534; cursor: default; }
+
+/* =====================================================================
+   THE SAN PHAM THOANG + POPUP CHON BIEN THE + GOI Y VOUCHER
+   note code nhu nay nhe ban: chi THEM quy tac moi o cuoi file (quy tac sau ghi de quy tac cu cung ten), khong sua phan o tren.
+   ===================================================================== */
+
+/* ---- the san pham: anh to, nhieu khoang trang, chi con ANH + TEN + GIA ---- */
+.luoi { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; padding: 8px 16px 18px; }
+.the { border-radius: 16px; border-color: #e8edf4; box-shadow: 0 1px 2px rgba(15, 23, 42, .05); }
+.the:hover { border-color: #cbd5e1; box-shadow: 0 8px 22px rgba(15, 23, 42, .14); transform: translateY(-2px); }
+.the .anh { aspect-ratio: 1 / 1; }
+.the .tt { padding: 12px 14px 14px; gap: 6px; }
+.the .ten { font-size: 14.5px; line-height: 1.35; min-height: 39px; }
+.the .gia { font-size: 16px; }
+.the .gia small { font-size: 11.5px; font-weight: 600; color: var(--muted); margin-right: 3px; }
+.the .bt-so { font-size: 12px; color: var(--muted); }
+.the.het .anh img { filter: grayscale(1); }
+
+/* ---- popup chon bien the (phan loai) ---- */
+.hop-bt { display: flex; flex-direction: column; width: 680px; max-width: 94vw; max-height: 90vh; background: #fff; border-radius: 18px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .35); overflow: hidden; text-align: left; }
+.bt-dau { display: flex; gap: 14px; align-items: center; padding: 18px 20px 12px; }
+.bt-anh { width: 88px; height: 88px; flex: none; border-radius: 14px; overflow: hidden; background: #eef1f6; border: 1px solid var(--line); }
+.bt-anh img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bt-tt { flex: 1; min-width: 0; }
+.bt-tt h2 { margin: 0 0 2px; font-size: 18px; line-height: 1.3; }
+.bt-hieu { color: var(--muted); font-size: 13px; }
+.bt-gia { margin-top: 4px; font-weight: 800; color: var(--bad); }
+.bt-gia s { color: var(--muted); font-weight: 400; font-size: 12.5px; margin-left: 6px; }
+.bt-loc { display: none; padding: 0 20px 8px; }
+.bt-ds { overflow-y: auto; display: grid; gap: 8px; padding: 4px 20px 8px; }
+.bt-dong { display: grid; grid-template-columns: minmax(0, 1fr) auto 92px auto auto; gap: 12px; align-items: center; padding: 10px 12px;
+    border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+.bt-dong:hover { border-color: #cbd5e1; }
+.bt-dong.het { background: #f8fafc; }
+.bt-dong.het .bt-ten, .bt-dong.het .bt-gia-dong { color: #94a3b8; }
+.bt-ten { font-weight: 700; line-height: 1.3; }
+.bt-sku { font-family: Consolas, monospace; font-size: 11.5px; color: #64748b; margin-top: 2px; }
+.bt-gia-dong { font-weight: 800; color: var(--bad); white-space: nowrap; text-align: right; }
+.bt-gia-dong s { display: block; color: var(--muted); font-weight: 400; font-size: 12px; }
+.bt-ton { font-size: 12.5px; font-weight: 800; border-radius: 8px; padding: 4px 8px; text-align: center; background: #dcfce7; color: #166534; }
+.bt-ton.it { background: #ffedd5; color: #9a3412; }
+.bt-ton.het { background: #fee2e2; color: #991b1b; }
+.bt-dong .stepper input { width: 44px; }
+.bt-chan { padding: 10px 20px 14px; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); }
+
+/* ---- goi y voucher khi go o "Ma giam gia" ---- */
+.phieu { position: relative; }
+.goi-y { position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 70; display: none; max-height: 290px; overflow-y: auto;
+    background: #fff; border: 1px solid #cbd5e1; border-radius: 12px; box-shadow: 0 12px 30px rgba(15, 23, 42, .2); padding: 4px; }
+.goi-y.mo { display: block; }
+.gy { padding: 8px 10px; border-radius: 8px; cursor: pointer; }
+.gy.sang, .gy:hover { background: #eef4ff; }
+.gy.khoa { cursor: not-allowed; }
+.gy.khoa .gy-tren b, .gy.khoa .gy-duoi { color: #94a3b8; }
+.gy-tren { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.gy-tren b { font-family: Consolas, monospace; letter-spacing: .02em; }
+.gy-giam { font-size: 12.5px; font-weight: 700; color: var(--ok); text-align: right; }
+.gy.khoa .gy-giam { color: #94a3b8; }
+.gy-duoi { font-size: 12.5px; color: var(--muted); margin-top: 1px; }
+.gy-trong { padding: 12px; text-align: center; color: var(--muted); font-size: 13px; }

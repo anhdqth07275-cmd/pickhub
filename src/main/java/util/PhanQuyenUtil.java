@@ -11,7 +11,7 @@ import enums.VaiTro;
  * Ma tran hien tai:
  *   QUAN_TRI  : lam duoc moi viec
  *   QUAN_LY   : moi viec (bao gom khuyen mai, phieu giam gia, nhan vien)
- *   NHAN_VIEN : xem moi thu tru khuyen mai / phieu giam gia / nhan vien; chi duoc GHI (POST) o don hang va tai khoan ca nhan
+ *   NHAN_VIEN : KHONG vao duoc /wp-admin (xem duocVaoAdmin) - chi lam viec o man hinh ban hang POS (/pos)
  */
 public class PhanQuyenUtil {
 
@@ -27,6 +27,16 @@ public class PhanQuyenUtil {
             "/wp-admin/don-hang",
             "/wp-admin/tai-khoan"
     };
+
+    /**
+     * YEU CAU PHAN QUYEN: chi QUAN_LY va QUAN_TRI moi duoc vao khu vuc /wp-admin.
+     * WpAdminFilter goi ham nay TRUOC khi xet tung trang; sai thi day nhan vien sang POS.
+     */
+    public static boolean duocVaoAdmin(String vaiTro) {
+        VaiTro vt = VaiTro.tuMa(vaiTro);
+        // note code nhu nay nhe ban: vai tro la / null -> khong cho vao; con lai phai tu cap QUAN_LY tro len (QUAN_LY, QUAN_TRI)
+        return vt != null && vt.tuCapDo(VaiTro.QUAN_LY);
+    }
 
     /** Dung cho JSP: nguoi nay co vao (xem) duoc trang nay khong? */
     public static boolean coQuyen(String vaiTro, String duongDan) {

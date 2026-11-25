@@ -1,3 +1,5 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%-- note code nhu nay nhe ban: file .jspf khong nam trong jsp-property-group (*.jsp) nen PHAI tu khai bao UTF-8, neu khong chu "·" va "dòng" bi loi font --%>
 <%-- Thanh phan trang dung chung. Can request attribute: pt (PhanTrang) va duongDan (vd /wp-admin/san-pham) --%>
 <c:if test="${pt.tongTrang > 1}">
     <div class="pager">

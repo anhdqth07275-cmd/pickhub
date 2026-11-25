@@ -4,7 +4,9 @@ import com.pickhub.dto.BienTheBanDTO;
 import com.pickhub.dto.BoLocBienTheDTO;
 import com.pickhub.dto.KetQuaGiaDTO;
 import com.pickhub.dto.TrangBienTheBanDTO;
+import com.pickhub.dto.SanPhamBanDTO;
 import com.pickhub.dto.TrangChiTietSanPhamDTO;
+import com.pickhub.dto.TrangSanPhamBanDTO;
 import com.pickhub.dto.TuyChonBoLocDTO;
 import com.pickhub.entity.ChatLieu;
 import com.pickhub.entity.ChiTietSanPham;
@@ -26,6 +28,7 @@ import com.pickhub.util.MoTaBienTheUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +45,36 @@ public class SanPhamServiceImpl extends BaseServiceImpl implements ISanPhamServi
     public TrangBienTheBanDTO timKiemBienThe(BoLocBienTheDTO boLoc) {
         TrangChiTietSanPhamDTO trang = chiTietSanPhamRepository.timKiemBienThe(boLoc);
         return new TrangBienTheBanDTO(taoDanhSachHienThi(trang.getDanhSach()), trang.getTongSo(), boLoc.getTrang(), boLoc.getKichThuoc());
+    }
+
+    @Override
+    public TrangSanPhamBanDTO timKiemSanPham(BoLocBienTheDTO boLoc) {
+        // note code nhu nay nhe ban: 3 buoc
+        //   1) lay ma cac SAN PHAM cua trang hien tai (+ tong so san pham de tinh so trang)
+        //   2) lay TAT CA bien the cua cac san pham do (ke ca bien the het hang de popup chon hien du)
+        //   3) gom bien the lai theo san pham, GIU DUNG thu tu cua buoc 1
+        List<Long> maSanPham = chiTietSanPhamRepository.timMaSanPham(boLoc);
+        long tongSo = chiTietSanPhamRepository.demSanPham(boLoc);
+        // taoDanhSachHienThi co san: gan anh + gia sau khuyen mai cho tung bien the
+        List<BienTheBanDTO> tatCaBienThe = taoDanhSachHienThi(chiTietSanPhamRepository.timBienTheTheoSanPham(maSanPham));
+
+        Map<Long, List<BienTheBanDTO>> theoSanPham = new LinkedHashMap<Long, List<BienTheBanDTO>>();
+        for (Long ma : maSanPham) {
+            theoSanPham.put(ma, new ArrayList<BienTheBanDTO>());
+        }
+        for (BienTheBanDTO bienThe : tatCaBienThe) {
+            List<BienTheBanDTO> nhom = theoSanPham.get(bienThe.getMaSanPham());
+            if (nhom != null) {
+                nhom.add(bienThe);
+            }
+        }
+        List<SanPhamBanDTO> danhSach = new ArrayList<SanPhamBanDTO>();
+        for (List<BienTheBanDTO> nhom : theoSanPham.values()) {
+            if (!nhom.isEmpty()) {
+                danhSach.add(new SanPhamBanDTO(nhom));
+            }
+        }
+        return new TrangSanPhamBanDTO(danhSach, tongSo, boLoc.getTrang(), boLoc.getKichThuoc());
     }
 
     @Override

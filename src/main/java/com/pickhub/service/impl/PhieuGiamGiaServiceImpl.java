@@ -1,6 +1,7 @@
 package com.pickhub.service.impl;
 
 import com.pickhub.dto.KetQuaPhieuDTO;
+import com.pickhub.dto.PhieuKhaDungDTO;
 import com.pickhub.entity.PhieuGiamGia;
 import com.pickhub.repository.IPhieuGiamGiaRepository;
 import com.pickhub.repository.impl.PhieuGiamGiaRepository;
@@ -10,6 +11,10 @@ import com.pickhub.util.NghiepVuException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class PhieuGiamGiaServiceImpl extends BaseServiceImpl implements IPhieuGiamGiaService {
 
@@ -40,21 +45,53 @@ public class PhieuGiamGiaServiceImpl extends BaseServiceImpl implements IPhieuGi
             throw new NghiepVuException("Hóa đơn cần tối thiểu " + phieu.getGiaTriDonToiThieu().toPlainString() + " đ để dùng mã này");
         }
 
+        // note code nhu nay nhe ban: BAT LAI kiem tra gioi han TONG luot dung (chi DOC soLanDaSuDung nen an toan).
+        // Phieu da het luot (do don online dung het) thi POS cung khong cho ap nua. gioiHanSuDung = null = khong gioi han.
+        if (phieu.getGioiHanSuDung() != null && phieu.getSoLanDaSuDung() >= phieu.getGioiHanSuDung()) {
+            throw new NghiepVuException("Mã giảm giá đã hết lượt sử dụng");
+        }
+
         // =====================================================================================================
-        // TAM TAT (theo yeu cau): kiem tra GIOI HAN SO LAN / SO LUONG SU DUNG phieu giam gia.
-        // Khi can bat lai chi viec bo comment khoi duoi day:
+        // VAN TAM TAT: gioi han MOI NGUOI (gioiHanMoiNguoi) va viec GHI NHAN luot dung o POS.
+        // Ly do: ban tai quay chi co khach le (khong biet khach la ai) nen khong dem duoc "moi nguoi da dung may lan".
+        // Gioi han moi nguoi van duoc ep o don ONLINE (PhieuGiamGiaService + SuDungPhieuService).
+        // Khi POS co chon khach hang thi bo comment khoi duoi day:
         //
-        // if (phieu.getGioiHanSuDung() != null && phieu.getSoLanDaSuDung() >= phieu.getGioiHanSuDung()) {
-        //     throw new NghiepVuException("Mã giảm giá đã hết lượt sử dụng");
-        // }
         // if (phieu.getGioiHanMoiNguoi() != null && soLanKhachDaDung >= phieu.getGioiHanMoiNguoi()) {
         //     throw new NghiepVuException("Khách đã dùng hết số lần cho phép của mã này");
         // }
-        //
-        // Dong thoi tam khong GHI NHAN luot dung (khong tang soLanDaSuDung, khong them dong SuDungPhieuGiamGia).
         // =====================================================================================================
 
         return new KetQuaPhieuDTO(phieu, tinhSoTienGiam(phieu, tamTinh));
+    }
+
+    @Override
+    public List<PhieuKhaDungDTO> layDanhSachKhaDung(BigDecimal tamTinh) {
+        if (tamTinh == null) {
+            tamTinh = BigDecimal.ZERO;
+        }
+        List<PhieuKhaDungDTO> ketQua = new ArrayList<PhieuKhaDungDTO>();
+        for (PhieuGiamGia phieu : phieuGiamGiaRepository.layDangKhaDung(LocalDateTime.now())) {
+            // note code nhu nay nhe ban: du dieu kien khi tamTinh >= don toi thieu; chua du thi tinh con thieu bao nhieu tien hang
+            boolean duDieuKien = tamTinh.compareTo(phieu.getGiaTriDonToiThieu()) >= 0;
+            BigDecimal soTienGiam = duDieuKien ? tinhSoTienGiam(phieu, tamTinh) : BigDecimal.ZERO;
+            BigDecimal canThem = duDieuKien ? BigDecimal.ZERO : phieu.getGiaTriDonToiThieu().subtract(tamTinh);
+            ketQua.add(new PhieuKhaDungDTO(phieu, soTienGiam, duDieuKien, canThem));
+        }
+        // sap xep: phieu du dieu kien truoc (giam nhieu nhat len dau), phieu chua du sau (thieu it tien nhat len dau)
+        Collections.sort(ketQua, new Comparator<PhieuKhaDungDTO>() {
+            @Override
+            public int compare(PhieuKhaDungDTO a, PhieuKhaDungDTO b) {
+                if (a.isDuDieuKien() != b.isDuDieuKien()) {
+                    return a.isDuDieuKien() ? -1 : 1;
+                }
+                if (a.isDuDieuKien()) {
+                    return b.getSoTienGiam().compareTo(a.getSoTienGiam());
+                }
+                return a.getCanThemTien().compareTo(b.getCanThemTien());
+            }
+        });
+        return ketQua;
     }
 
     /** Giam % (co tran giamToiDa) hoac giam so tien co dinh; khong bao gio giam qua tong tien hang. */

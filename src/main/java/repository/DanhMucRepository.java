@@ -3,6 +3,7 @@ package repository;
 import entity.DanhMuc;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import util.GiaoDich;
 import util.HibernateConfig;
 
 import java.util.List;
@@ -89,5 +90,14 @@ public class DanhMucRepository extends BaseRepository<DanhMuc> {
             Long count = q.uniqueResult();
             return count == null ? 0L : count;
         }
+    }
+
+    // note code nhu nay nhe ban: XOA CUNG 1 danh muc. Chi duoc goi SAU KHI DanhMucService.xoa() da kiem tra
+    // danh muc khong con danh muc con va khong co san pham (neu khong se vi pham khoa ngoai trong SQL Server)
+    public void xoa(Long maDanhMuc) {
+        GiaoDich.chay(s -> {
+            s.createQuery("delete from DanhMuc d where d.maDanhMuc = :id").setParameter("id", maDanhMuc).executeUpdate();
+            return null;
+        });
     }
 }

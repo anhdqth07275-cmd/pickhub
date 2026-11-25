@@ -153,3 +153,212 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--blue); bord
 
 @media (max-width: 1100px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } .grid-2, .grid-2e { grid-template-columns: 1fr; } .tiles { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 760px) { .sidebar { position: static; width: auto; } .main { margin-left: 0; padding: 16px; } .info-grid { grid-template-columns: 1fr; } .tiles { grid-template-columns: repeat(2, 1fr); } }
+
+/* =====================================================================
+   MO RONG GIAO DIEN (theo vungu.txt): san pham, bo loc, ton kho, tai khoan ca nhan, phieu giam gia
+   note code nhu nay nhe ban: chi THEM class moi o cuoi file, KHONG sua class cu o tren
+   => cac trang khac (don hang, dashboard, khuyen mai...) khong bi anh huong.
+   Dung lai bien mau :root (--navy, --lime, --blue, --line...) de dong bo voi toan he thong.
+   ===================================================================== */
+
+/* ---------- thanh hanh dong duoi tieu de trang ---------- */
+.page-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: -8px 0 16px; }
+.page-actions .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.hint { color: var(--muted); font-size: 13px; margin: 4px 0 0; line-height: 1.45; }
+.btn.blue { background: var(--blue); color: #fff; }
+.btn.warn { background: #fff0d9; color: #a85d00; }
+a.btn { text-decoration: none; }
+
+/* ---------- o nhap lieu co nhan (dung chung cho bo loc va form) ---------- */
+.fld label { display: block; font-weight: 600; font-size: 13.5px; margin-bottom: 5px; color: #2b3a52; }
+.fld label .req { color: var(--bad); }
+.fld input[type=text], .fld input[type=number], .fld input[type=password], .fld input[type=email], .fld input[type=date], .fld input[type=url], .fld input[type=tel],
+.fld select, .fld textarea { width: 100%; padding: 10px 13px; border: 1px solid #d5dae3; border-radius: 10px; font: inherit; background: #fff; min-width: 0; }
+.fld input:disabled { background: #f2f4f8; color: var(--muted); }
+.fld input:focus, .fld select:focus, .fld textarea:focus { outline: 2px solid var(--blue); border-color: transparent; }
+.fld textarea { resize: vertical; min-height: 90px; }
+
+/* ---------- the bo loc ---------- */
+.filter-card { margin-bottom: 16px; padding: 18px 20px; }
+.filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+.filter-grid .fld-wide { grid-column: span 2; }
+.filter-row { display: flex; gap: 26px; flex-wrap: wrap; margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--line); }
+.filter-actions { display: flex; gap: 8px; align-items: center; margin-left: auto; align-self: flex-end; }
+
+/* chip chon 1 trong nhieu (radio an, chu bam duoc) */
+.chip-group { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip-group label { margin: 0; cursor: pointer; }
+.chip-group input { position: absolute; opacity: 0; pointer-events: none; }
+.chip-group span { display: inline-block; padding: 7px 14px; border-radius: 99px; border: 1px solid #d5dae3; background: #fff; font-size: 13.5px; font-weight: 600; color: #475569; }
+.chip-group input:checked + span { background: var(--navy); border-color: var(--navy); color: var(--lime); }
+.chip-group input:focus-visible + span { outline: 2px solid var(--blue); }
+
+/* tom tat bo loc dang ap dung */
+.active-filters { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin: -4px 0 14px; }
+.active-filters .tag { background: #e8edf8; color: #2a4aa8; border-radius: 99px; padding: 3px 12px; font-size: 13px; font-weight: 600; }
+.active-filters .lbl { color: var(--muted); font-size: 13px; }
+
+/* ---------- bang san pham ---------- */
+.sp-cell { display: flex; align-items: center; gap: 12px; min-width: 240px; }
+.sp-cell .thumb { width: 54px; height: 54px; border-radius: 10px; flex: none; border: 1px solid var(--line); }
+.sp-cell .ten { font-weight: 700; line-height: 1.3; }
+.sp-cell .ten:hover { color: var(--blue); }
+.sp-cell .slug { color: var(--muted); font-size: 12.5px; }
+.row-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.row-actions form { margin: 0; }
+.badge.green { background: #dcf5e4; color: #11772f; }
+.badge.orange { background: #fff0d9; color: #a85d00; }
+.badge.red { background: #fde2e2; color: #b01919; }
+.badge.gray { background: #eceff4; color: #5d6877; }
+.badge.blue { background: #e3ecff; color: #2a4aa8; }
+
+/* phan trang co chua dau "..." */
+.pager .gap { color: var(--muted); padding: 0 2px; }
+
+/* ---------- form san pham / bien the ---------- */
+.form-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.form-stack { display: grid; gap: 14px; }
+.form-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-3col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.form-card h3 { display: flex; align-items: center; gap: 8px; }
+.form-card h3 small { color: var(--muted); font-weight: 500; font-size: 13px; }
+.form-foot { display: flex; gap: 10px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+.switch-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: #fafbfd; }
+.switch-row input { width: 18px; height: 18px; flex: none; }
+.switch-row b { display: block; }
+.switch-row span { color: var(--muted); font-size: 13px; }
+
+/* ---------- trang chi tiet san pham ---------- */
+.detail-head { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; align-items: flex-start; margin-bottom: 14px; }
+.detail-head h3 { font-size: 20px; margin: 0 0 4px; }
+.img-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+.img-card { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
+.img-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; background: #eef1f6; display: block; }
+.img-card .body { padding: 10px 12px; display: grid; gap: 6px; font-size: 13px; }
+.img-card .path { color: var(--muted); word-break: break-all; font-size: 12px; }
+.img-card details summary { cursor: pointer; color: var(--blue); font-weight: 600; }
+.img-card details form { display: grid; gap: 6px; margin-top: 6px; }
+.img-card input { width: 100%; padding: 6px 9px; border: 1px solid #d5dae3; border-radius: 8px; font: inherit; }
+
+/* ---------- ton kho ---------- */
+.mini-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.mini-stats .box { background: #fff; border-radius: 14px; padding: 14px 18px; box-shadow: 0 1px 3px rgba(14, 26, 43, .06); display: flex; align-items: center; gap: 14px; }
+.mini-stats .box b { font-size: 24px; display: block; line-height: 1.1; }
+.mini-stats .box span { color: var(--muted); font-size: 13px; }
+.mini-stats .box.warn b { color: var(--warn); }
+.mini-stats a.box:hover { box-shadow: 0 4px 14px rgba(14, 26, 43, .12); }
+.qty { font-weight: 800; font-size: 16px; }
+.qty.low { color: var(--warn); }
+.qty.zero { color: var(--bad); }
+.stock-forms { display: flex; gap: 8px; flex-wrap: wrap; }
+.stock-forms form { display: inline-flex; gap: 4px; margin: 0; }
+.stock-forms input[type=number] { width: 76px; padding: 5px 8px; border: 1px solid #d5dae3; border-radius: 8px; font: inherit; }
+
+/* ---------- tai khoan ca nhan ---------- */
+.profile-wrap { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 16px; align-items: start; }
+.profile-card { text-align: center; padding: 26px 20px; }
+.profile-card .avatar-lg { width: 84px; height: 84px; border-radius: 50%; background: var(--lime); color: var(--navy); font-weight: 900; font-size: 34px; display: grid; place-items: center; margin: 0 auto 12px; }
+.profile-card h2 { margin: 0 0 6px; font-size: 20px; }
+.profile-card .mail { color: var(--muted); word-break: break-all; font-size: 14px; margin-bottom: 14px; }
+.profile-meta { text-align: left; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); display: grid; gap: 10px; font-size: 13.5px; }
+.profile-meta div span { display: block; color: var(--muted); font-size: 12.5px; }
+.tabs-nav { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: -6px 0 20px; }
+.tabs-nav a { padding: 11px 18px; font-weight: 600; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -1px; }
+.tabs-nav a:hover { color: var(--navy); }
+.tabs-nav a.on { color: var(--navy); border-bottom-color: var(--lime); }
+.panel-title { margin: 0 0 4px; font-size: 18px; }
+.panel-sub { color: var(--muted); margin: 0 0 18px; }
+.rule-list { margin: 8px 0 0; padding-left: 18px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.show-pass { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--muted); }
+
+/* ---------- phieu giam gia: gioi han su dung ---------- */
+.limit-box { border: 1px solid #cfe0ff; background: #f5f9ff; border-radius: 14px; padding: 16px 18px; }
+.limit-box h4 { margin: 0 0 4px; font-size: 15px; color: #2a4aa8; }
+.limit-box .hint { margin-bottom: 12px; }
+.usage-bar { width: 110px; height: 8px; background: #e6e9ef; border-radius: 99px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 8px; }
+.usage-bar i { display: block; height: 100%; background: var(--blue); border-radius: 99px; }
+.usage-bar.full i { background: var(--bad); }
+
+@media (max-width: 1100px) {
+    .form-layout, .profile-wrap { grid-template-columns: 1fr; }
+    .filter-grid .fld-wide { grid-column: auto; }
+}
+@media (max-width: 760px) {
+    .form-2col, .form-3col { grid-template-columns: 1fr; }
+    .filter-actions { margin-left: 0; }
+}
+
+/* =====================================================================
+   KHUYEN MAI: POPUP THEM / SUA (theo anh mau) - cac class bat dau bang km-
+   note code nhu nay nhe ban: chi THEM class moi o cuoi file, khong sua class cu.
+   ===================================================================== */
+body.km-khoa-cuon { overflow: hidden; }               /* popup mo thi trang phia sau khong cuon */
+
+/* thanh tim kiem (o danh sach va trong popup) */
+.km-loc { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; padding: 14px 16px; }
+.km-o-tim { flex: 1; min-width: 220px; }
+.km-o-tim input { width: 100%; padding: 11px 14px 11px 40px; border: 1px solid #d5dae3; border-radius: 12px; font: inherit; background: #fff
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%238a94a6' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") no-repeat 13px center; }
+.km-o-tim input:focus { outline: 2px solid var(--blue); border-color: transparent; }
+.km-o-tim-day { margin-bottom: 10px; }
+
+/* khung popup */
+.km-nen { position: fixed; inset: 0; z-index: 9000; display: flex; align-items: center; justify-content: center; padding: 20px;
+    background: rgba(15, 23, 42, .55); backdrop-filter: blur(3px); }
+.km-hop { display: flex; flex-direction: column; width: 100%; max-width: 1020px; max-height: calc(100vh - 40px); background: #fff;
+    border-radius: 18px; box-shadow: 0 30px 80px rgba(0, 0, 0, .35); overflow: hidden; }
+.km-dau { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px 8px; }
+.km-dau h2 { margin: 0; font-size: 20px; }
+.km-x { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: #f1f5f9; color: #475569; font-size: 15px; }
+.km-x:hover { background: var(--lime); color: var(--navy); }
+.km-than { flex: 1; overflow-y: auto; padding: 6px 24px 16px; }
+.km-luoi { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.km-r2 { grid-column: span 2; }
+.km-gach { border: 0; border-top: 1px solid var(--line); margin: 18px 0 14px; }
+.km-khoa { margin-top: 16px; background: #fff7e0; color: #8a5a00; }
+
+/* muc giam mac dinh */
+.km-muc-giam { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+.km-muc-giam .fld { min-width: 200px; flex: 1; max-width: 300px; }
+
+/* tieu de + o tim + bang tich chon */
+.km-tieu-de { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 14px 0 8px; }
+.km-tieu-de > label { font-weight: 700; margin: 0; }
+.km-tieu-de-phai { display: flex; gap: 12px; align-items: center; }
+.km-chi-chon { display: flex; align-items: center; gap: 6px; font-size: 13.5px; color: #475569; cursor: pointer; }
+.km-bang-wrap { border: 1px solid var(--line); border-radius: 14px; max-height: 330px; overflow: auto; }
+.km-bang { width: 100%; border-collapse: collapse; font-size: 14px; }
+.km-bang thead th { position: sticky; top: 0; z-index: 1; background: #f8fafc; padding: 11px 12px; text-align: left; font-size: 12px; letter-spacing: .04em;
+    text-transform: uppercase; color: #64748b; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.km-bang th.num, .km-bang td.num { text-align: right; }
+.km-bang td { padding: 10px 12px; border-bottom: 1px solid #eef1f6; vertical-align: middle; }
+.km-bang tr:last-child td { border-bottom: 0; }
+.km-c-chon { width: 44px; text-align: center !important; }
+.km-c-chon input { width: 18px; height: 18px; cursor: pointer; }
+.km-dong[hidden] { display: none; }
+.km-dong:hover { background: #fafbfd; }
+.km-dong.chon { background: #f4faea; }
+.km-phu { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+.km-loai { display: inline-flex; border: 1px solid #d5dae3; border-radius: 9px; overflow: hidden; background: #fff; }
+.km-loai label { margin: 0; cursor: pointer; }
+.km-loai input { position: absolute; opacity: 0; pointer-events: none; }
+.km-loai span { display: block; min-width: 38px; padding: 6px 12px; text-align: center; font-weight: 800; color: #64748b; }
+.km-loai input:checked + span { background: var(--navy); color: var(--lime); }
+.km-loai input:disabled + span { opacity: .5; cursor: not-allowed; }
+.km-giatri, .km-sl { width: 120px; padding: 7px 10px; border: 1px solid #d5dae3; border-radius: 9px; font: inherit; }
+.km-giatri:disabled, .km-sl:disabled { background: #f3f5f9; color: #a3acba; }
+.km-sau { font-weight: 800; }
+.km-ghi-chu { min-height: 18px; margin-top: 6px; font-size: 12.5px; color: var(--muted); }
+
+/* chan popup: tong ket + nut (giong "Tong gia le" trong anh mau) */
+.km-chan { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 14px 24px; border-top: 1px solid var(--line); background: #fff; }
+.km-tong { font-size: 14px; color: #475569; }
+.km-tong b { color: var(--navy); }
+.km-nut { display: flex; gap: 10px; }
+
+@media (max-width: 760px) {
+    .km-luoi { grid-template-columns: 1fr; }
+    .km-r2 { grid-column: auto; }
+    .km-nen { padding: 8px; }
+    .km-hop { max-height: calc(100vh - 16px); }
+}

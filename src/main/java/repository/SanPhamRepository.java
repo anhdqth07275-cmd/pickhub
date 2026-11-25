@@ -54,13 +54,19 @@ public class SanPhamRepository extends BaseRepository<SanPham> {
             hql.append(" and exists (select 1 from ChiTietSanPham c where c.sanPham = s and c.khoiLuong.maKhoiLuong = :kl)");
             thamSo.add(new Object[]{"kl", loc.getMaKhoiLuong()});
         }
-        if (loc.getGiaTu() != null) {
-            hql.append(" and exists (select 1 from ChiTietSanPham c where c.sanPham = s and c.giaGoc >= :giaTu)");
-            thamSo.add(new Object[]{"giaTu", loc.getGiaTu()});
-        }
-        if (loc.getGiaDen() != null) {
-            hql.append(" and exists (select 1 from ChiTietSanPham c where c.sanPham = s and c.giaGoc <= :giaDen)");
-            thamSo.add(new Object[]{"giaDen", loc.getGiaDen()});
+        // note code nhu nay nhe ban: LOI CU - "gia tu" va "gia den" nam o 2 EXISTS rieng nen san pham co 1 bien the re (100k) va 1 bien the dat (900k)
+        // van lot vao khoang 400k-600k. Gop thanh 1 EXISTS de CUNG 1 bien the phai nam trong khoang gia
+        if (loc.getGiaTu() != null || loc.getGiaDen() != null) {
+            hql.append(" and exists (select 1 from ChiTietSanPham c where c.sanPham = s");
+            if (loc.getGiaTu() != null) {
+                hql.append(" and c.giaGoc >= :giaTu");
+                thamSo.add(new Object[]{"giaTu", loc.getGiaTu()});
+            }
+            if (loc.getGiaDen() != null) {
+                hql.append(" and c.giaGoc <= :giaDen");
+                thamSo.add(new Object[]{"giaDen", loc.getGiaDen()});
+            }
+            hql.append(")");
         }
         // loc tinh trang ton: cac chuoi nay do CODE quy dinh (khong lay nguyen van tu nguoi dung)
         if ("HET".equals(loc.getTinhTrangTon())) {

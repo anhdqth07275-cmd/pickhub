@@ -1,0 +1,20 @@
+/* =====================================================================
+   SELECT-SEARCH (di kem select-search.js): khung tim kiem noi bat cho moi o <select>.
+   note code nhu nay nhe ban: file CSS rieng, khong dung chung voi admin.css / pos.css nen khong lam anh huong gi o cu.
+   ===================================================================== */
+.ss-khung { position: fixed; z-index: 100000; display: none; flex-direction: column; background: #fff; color: #1b2433;
+    border: 1px solid #cfd6e4; border-radius: 12px; box-shadow: 0 14px 36px rgba(15, 23, 42, .22); overflow: hidden;
+    font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+.ss-khung.mo { display: flex; }
+.ss-tim { margin: 8px; padding: 9px 12px 9px 34px; border: 1px solid #cfd6e4; border-radius: 9px; font: inherit; outline: none; min-width: 0;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238a94a6' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") no-repeat 11px center; }
+.ss-tim:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, .18); }
+.ss-ds { list-style: none; margin: 0; padding: 2px 0 6px; max-height: 260px; overflow-y: auto; }
+.ss-it { padding: 8px 14px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ss-it.sang { background: #e8f0ff; }
+.ss-it.chon { font-weight: 700; color: #1d4ed8; }
+.ss-it.khoa { color: #a3acba; cursor: not-allowed; }
+.ss-nhom { padding: 8px 14px 3px; font-size: 11.5px; font-weight: 700; color: #8a94a6; text-transform: uppercase; letter-spacing: .03em; }
+.ss-trong { padding: 16px; text-align: center; color: #8a94a6; }
+.ss-ghi-chu { display: none; padding: 6px 14px 8px; font-size: 12px; color: #8a94a6; border-top: 1px solid #eef1f6; }
+select.ss-dang-mo { outline: 2px solid #3b82f6; outline-offset: 1px; }

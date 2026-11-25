@@ -27,12 +27,18 @@ public class TonKhoService {
     }
 
     // ---------------- MAN HINH TON KHO ----------------
-    /** Danh sach ton kho: tim theo ma hang / ten san pham, loc tinh trang (HET / SAP_HET / CON), it hang len truoc. */
-    public PhanTrang<ChiTietSanPham> timKiem(String tuKhoa, String tinhTrang, int trang) {
-        BoLoc loc = new BoLoc().cotTim("maHang,sanPham.tenSanPham").tuKhoa(tuKhoa).trang(trang).sapXep("x.soLuongTon asc");
-        if ("HET".equals(tinhTrang)) loc.dieuKienThem("x.soLuongTon = 0");
-        else if ("SAP_HET".equals(tinhTrang)) loc.dieuKienThem("x.soLuongTon > 0 and x.soLuongTon <= x.nguongCanhBaoTonKho");
-        else if ("CON".equals(tinhTrang)) loc.dieuKienThem("x.soLuongTon > x.nguongCanhBaoTonKho");
+    /**
+     * Danh sach ton kho: tim theo ma hang / ten san pham, loc trang thai, it hang len truoc.
+     * trangThai : DANG_BAN / NGUNG_BAN / HET_HANG (rong = tat ca)
+     * chiSapHet : true = chi hien bien the sap het hoac het hang (khop so tren dashboard va ham demSapHet)
+     */
+    public PhanTrang<ChiTietSanPham> timKiem(String tuKhoa, String trangThai, boolean chiSapHet, int trang) {
+        // note code nhu nay nhe ban: cotTrangThai("trangThai") lam BaseRepository tu them dieu kien "x.trangThai = :tt" (co tham so, an toan)
+        BoLoc loc = new BoLoc().cotTim("maHang,sanPham.tenSanPham").tuKhoa(tuKhoa)
+                .cotTrangThai("trangThai").trangThai(trangThai)
+                .trang(trang).sapXep("x.soLuongTon asc");
+        // note code nhu nay nhe ban: cung dieu kien voi repo.demSapHet() de so "sap het" tren dashboard va danh sach luon bang nhau
+        if (chiSapHet) loc.dieuKienThem("x.soLuongTon <= x.nguongCanhBaoTonKho and x.trangThai <> 'NGUNG_BAN'");
         return repo.timKiem(loc);
     }
 

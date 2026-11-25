@@ -3,6 +3,8 @@ package repository;
 import entity.SuDungPhieuGiamGia;
 import org.hibernate.Session;
 
+import java.util.List;
+
 /**
  * Repository cua bang SuDungPhieuGiamGia (M4). Da co san: timTheoId, layTatCa, dem, timKiem, luu, capNhat (ke thua BaseRepository).
  */
@@ -30,5 +32,17 @@ public class SuDungPhieuGiamGiaRepository extends BaseRepository<SuDungPhieuGiam
     public SuDungPhieuGiamGia timTheoHoaDon(Session s, Long maHoaDon) {
         return s.createQuery("from SuDungPhieuGiamGia x where x.maHoaDon = :hd", SuDungPhieuGiamGia.class)
                 .setParameter("hd", maHoaDon).uniqueResult();
+    }
+
+    // note code nhu nay nhe ban: moi khach da dung phieu nay bao nhieu lan (chi dem DA_SU_DUNG), nhieu lan nhat len truoc.
+    // Moi dong tra ve la mang {maKhachHang, hoTen, thuDienTu, soLuot}
+    public List<Object[]> thongKeTheoKhach(Long maPhieu) {
+        try (Session s = moSession()) {
+            return s.createQuery("select k.maKhachHang, k.hoTen, k.thuDienTu, count(x) "
+                    + "from SuDungPhieuGiamGia x join x.khachHang k "
+                    + "where x.phieuGiamGia.maPhieuGiamGia = :p and x.trangThai = 'DA_SU_DUNG' "
+                    + "group by k.maKhachHang, k.hoTen, k.thuDienTu order by count(x) desc, k.hoTen", Object[].class)
+                    .setParameter("p", maPhieu).list();
+        }
     }
 }

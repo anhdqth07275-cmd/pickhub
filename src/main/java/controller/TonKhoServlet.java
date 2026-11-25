@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.TonKhoService;
+import util.DocSoUtil;
 
 import java.io.IOException;
 
@@ -20,7 +21,11 @@ public class TonKhoServlet extends BaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("ketQua", service.timKiem(docChuoi(req, "tuKhoa"), docChuoi(req, "tinhTrang"), docSo(req, "trang", 1)));
+        // note code nhu nay nhe ban: ten tham so phai KHOP voi form o ton-kho.jsp va link o dashboard (?canhBao=1)
+        boolean chiSapHet = "1".equals(docChuoi(req, "canhBao"));
+        // LOI CU: servlet gui bien "ketQua" nhung JSP doc "pt" nen bang luon trong -> doi thanh "pt" + them "duongDan" cho phan trang
+        req.setAttribute("pt", service.timKiem(docChuoi(req, "tuKhoa"), docChuoi(req, "trangThai"), chiSapHet, docSo(req, "trang", 1)));
+        req.setAttribute("duongDan", "/wp-admin/ton-kho");
         req.setAttribute("soSapHet", service.demSapHet());      // hien canh bao tren dau trang
         hienThi(req, resp, "san-pham/ton-kho", "ton-kho", "Tồn kho");
     }
@@ -30,8 +35,11 @@ public class TonKhoServlet extends BaseServlet {
         String hanhDong = docChuoi(req, "hanhDong");
         try {
             if (hanhDong.equals("kiemKe")) {
-                // so ton nhap sai (chu, rong) -> -1 de bi chan o service
-                service.capNhatTon(docLong(req, "id"), docSo(req, "soLuong", -1));
+                // note code nhu nay nhe ban: kiem ke cho phep dat ton = 0 (kho het sach). docSo() coi so < 1 la khong hop le nen
+                // khong dung duoc o day -> dung DocSoUtil.soNguyen (nhap chu thi bao loi, de trong thi tra ve null)
+                Integer soLuong = DocSoUtil.soNguyen(docChuoi(req, "soLuong"), "Số lượng tồn");
+                if (soLuong == null) throw new NghiepVuException("Vui lòng nhập số lượng tồn");
+                service.capNhatTon(docLong(req, "id"), soLuong);       // so am -> service bao loi
                 chuyenHuong(req, resp, "/wp-admin/ton-kho", "Đã cập nhật số lượng tồn");
             } else if (hanhDong.equals("nhapThem")) {
                 service.nhapThem(docLong(req, "id"), docSo(req, "soLuong", 0));

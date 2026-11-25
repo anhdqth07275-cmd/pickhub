@@ -1,5 +1,7 @@
 package service;
 
+import dto.BoLoc;
+import dto.DongKhuyenMaiDTO;
 import dto.KetQuaGiaDTO;
 import entity.ChiTietChuongTrinhKhuyenMai;
 import entity.ChiTietSanPham;
@@ -10,14 +12,23 @@ import repository.ChiTietChuongTrinhKhuyenMaiRepository;
 import repository.ChiTietSanPhamRepository;
 import repository.ChuongTrinhKhuyenMaiRepository;
 import util.DinhDangUtil;
+import util.GiaoDich;
+import util.NhapLieuUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Nghiep vu chuong trinh khuyen mai (module M4).
- * - Quan ly chuong trinh: them / sua / tam dung / chay lai
+ * - Quan ly chuong trinh: them / sua / tam dung / chay lai / xoa
+ * - Popup "Them / Sua chuong trinh": luu chuong trinh KEM danh sach san pham tich chon (luuChuongTrinhKemSanPham)
  * - Quan ly muc giam cua tung chi tiet san pham trong chuong trinh
  * - tinhGiaSauKhuyenMai(): HAM DUNG CHUNG cho M3 (hien gia), M5 (gio hang), M6 (dat hang)
  */
@@ -241,5 +252,158 @@ public class KhuyenMaiService {
     public void hoanDaBan(Session session, Long maChiTietCTKM, int soLuong) {
         if (maChiTietCTKM == null) return;
         chiTietRepo.hoanSoLuongDaBan(session, maChiTietCTKM, soLuong);
+    }
+
+    // =====================================================================
+    // 5. POPUP "THEM / SUA CHUONG TRINH" : TICH CHON SAN PHAM + MUC GIAM, LUU 1 LAN
+    // =====================================================================
+
+    /**
+     * Luu chuong trinh + TOAN BO san pham duoc tich chon trong 1 lan bam "Luu chuong trinh".
+     *
+     * @param ct          chuong trinh (moi hoac dang sua), da set ten / mo ta / ngay bat dau / ngay ket thuc
+     * @param dsDong      cac dong DA TICH CHON (loaiGiam, giaTriGiam, soLuongGioiHan la chuoi nguoi dung nhap)
+     * @param suaSanPham  false = chi sua thong tin chuong trinh, KHONG dung toi danh sach san pham
+     *                    (vd chuong trinh da ket thuc: popup an bang san pham)
+     *
+     * note code nhu nay nhe ban: thu tu lam viec:
+     *   1) kiem tra HET moi dong (loi o bat ky dong nao thi nem loi ngay, CHUA ghi gi vao DB)
+     *   2) luu chuong trinh (luuChuongTrinh co san: validate ten, thoi gian...)
+     *   3) ghi cac dong san pham trong 1 transaction: them dong moi, sua dong da co, go dong bi bo tich
+     */
+    public void luuChuongTrinhKemSanPham(ChuongTrinhKhuyenMai ct, Long maNguoiTao, List<DongKhuyenMaiDTO> dsDong, boolean suaSanPham) {
+        if (!suaSanPham) {
+            luuChuongTrinh(ct, maNguoiTao);
+            return;
+        }
+        boolean themMoi = ct.getMaChuongTrinhKhuyenMai() == null;
+        if (dsDong == null || dsDong.isEmpty()) {
+            throw new NghiepVuException("Vui lòng tích chọn ít nhất 1 sản phẩm áp dụng khuyến mãi");
+        }
+        if (!themMoi) kiemTraChuongTrinhConSua(ct.getMaChuongTrinhKhuyenMai());
+
+        // cac dong DA CO trong chuong trinh (key = ma bien the) de biet dong nao la moi / sua / bi go
+        Map<Long, ChiTietChuongTrinhKhuyenMai> dongCu = new HashMap<>();
+        if (!themMoi) {
+            for (ChiTietChuongTrinhKhuyenMai d : chiTietRepo.timTheoChuongTrinh(ct.getMaChuongTrinhKhuyenMai())) {
+                dongCu.put(d.getChiTietSanPham().getMaChiTietSanPham(), d);
+            }
+        }
+
+        // ---- 1. kiem tra tung dong da tich ----
+        List<ChiTietChuongTrinhKhuyenMai> canThem = new ArrayList<>();
+        List<ChiTietChuongTrinhKhuyenMai> canSua = new ArrayList<>();
+        Set<Long> giuLai = new HashSet<>();
+        for (DongKhuyenMaiDTO dong : dsDong) {
+            // note code nhu nay nhe ban: tai lai bien the tu DB (khong tin du lieu tu trinh duyet) de lay gia goc / trang thai moi nhat
+            ChiTietSanPham sp = sanPhamRepo.timTheoId(dong.getBienThe().getMaChiTietSanPham());
+            if (sp == null) throw new NghiepVuException("Có sản phẩm không còn tồn tại, vui lòng tải lại trang");
+            if (!giuLai.add(sp.getMaChiTietSanPham())) continue;           // tich trung 1 san pham 2 lan -> bo qua lan sau
+
+            ChiTietChuongTrinhKhuyenMai d = dongCu.get(sp.getMaChiTietSanPham());
+            String nhan = "[" + sp.getMaHang() + "] ";                       // gan ma hang vao thong bao loi de biet dong nao sai
+            if (d == null && !"DANG_BAN".equals(sp.getTrangThai())) {
+                throw new NghiepVuException(nhan + "sản phẩm không ở trạng thái đang bán nên không thể thêm vào chương trình");
+            }
+            BigDecimal giaTri;
+            Integer soLuong;
+            try {
+                giaTri = NhapLieuUtil.docSo(dong.getGiaTriGiam(), "Giá trị giảm");
+                soLuong = NhapLieuUtil.docSoNguyen(dong.getSoLuongGioiHan(), "Giới hạn số lượng");
+                // note code nhu nay nhe ban: dung lai kiemTraMucGiam co san (PHAN_TRAM trong (0,100], SO_TIEN < gia goc, soLuongDaBan <= gioi han)
+                kiemTraMucGiam(dong.getLoaiGiam(), giaTri, sp.getGiaGoc(), soLuong, d == null || d.getSoLuongDaBan() == null ? 0 : d.getSoLuongDaBan());
+            } catch (NghiepVuException e) {
+                throw new NghiepVuException(nhan + e.getMessage());
+            }
+
+            if (d == null) {
+                d = new ChiTietChuongTrinhKhuyenMai();
+                d.setChiTietSanPham(sp);
+                d.setSoLuongDaBan(0);
+                canThem.add(d);
+            } else {
+                canSua.add(d);
+            }
+            d.setLoaiGiam(dong.getLoaiGiam());
+            d.setGiaTriGiam(giaTri.setScale(2, RoundingMode.HALF_UP));
+            d.setSoLuongGioiHan(soLuong);
+        }
+
+        // dong da co nhung bi BO TICH -> go ra khoi chuong trinh (neu da co hoa don dung thi khong go duoc, giong goChiTiet)
+        List<Long> canGo = new ArrayList<>();
+        for (Map.Entry<Long, ChiTietChuongTrinhKhuyenMai> e : dongCu.entrySet()) {
+            if (giuLai.contains(e.getKey())) continue;
+            ChiTietChuongTrinhKhuyenMai d = e.getValue();
+            if (chiTietRepo.demHoaDonDung(d.getMaChiTietChuongTrinhKhuyenMai()) > 0) {
+                throw new NghiepVuException("[" + d.getChiTietSanPham().getMaHang() + "] đã có hóa đơn dùng mức giảm này nên không thể bỏ chọn. "
+                        + "Hãy giữ tích chọn, hoặc tạm dừng chương trình nếu muốn ngừng giảm giá");
+            }
+            canGo.add(d.getMaChiTietChuongTrinhKhuyenMai());
+        }
+
+        // ---- 2. luu chuong trinh (ham co san, tu validate ten / thoi gian) ----
+        luuChuongTrinh(ct, maNguoiTao);
+
+        // ---- 3. ghi cac dong san pham trong 1 transaction ----
+        final Long maChuongTrinh = ct.getMaChuongTrinhKhuyenMai();
+        GiaoDich.chay(s -> {
+            for (ChiTietChuongTrinhKhuyenMai d : canThem) {
+                d.setMaChuongTrinhKhuyenMai(maChuongTrinh);
+                s.persist(d);
+            }
+            for (ChiTietChuongTrinhKhuyenMai d : canSua) s.merge(d);
+            for (Long id : canGo) {
+                ChiTietChuongTrinhKhuyenMai d = s.get(ChiTietChuongTrinhKhuyenMai.class, id);
+                if (d != null) s.remove(d);
+            }
+            return null;
+        });
+    }
+
+    /** XOA chuong trinh. Da co hoa don dung bat ky dong nao cua chuong trinh thi khong xoa duoc (se loi khoa ngoai) -> bao loi, goi y Tam dung. */
+    public void xoaChuongTrinh(Long maChuongTrinh) {
+        ChuongTrinhKhuyenMai ct = ctRepo.timTheoId(maChuongTrinh);
+        if (ct == null) throw new NghiepVuException("Không tìm thấy chương trình khuyến mãi");
+        for (ChiTietChuongTrinhKhuyenMai d : chiTietRepo.timTheoChuongTrinh(maChuongTrinh)) {
+            if (chiTietRepo.demHoaDonDung(d.getMaChiTietChuongTrinhKhuyenMai()) > 0) {
+                throw new NghiepVuException("Chương trình \"" + ct.getTenChuongTrinh() + "\" đã có hóa đơn áp dụng nên không thể xóa. "
+                        + "Hãy dùng \"Tạm dừng\" để ngừng giảm giá");
+            }
+        }
+        ctRepo.xoa(maChuongTrinh);
+    }
+
+    /** Cac san pham DA co trong chuong trinh, dang o dang "da tich chon" de popup Sua hien san. */
+    public List<DongKhuyenMaiDTO> layDongDaChon(Long maChuongTrinh) {
+        List<DongKhuyenMaiDTO> ds = new ArrayList<>();
+        for (ChiTietChuongTrinhKhuyenMai d : chiTietRepo.timTheoChuongTrinh(maChuongTrinh)) {
+            DongKhuyenMaiDTO dong = new DongKhuyenMaiDTO(d.getChiTietSanPham());
+            dong.setChon(true);
+            dong.setMaDong(d.getMaChiTietChuongTrinhKhuyenMai());
+            dong.setLoaiGiam(d.getLoaiGiam());
+            dong.setGiaTriGiam(d.getGiaTriGiam().stripTrailingZeros().toPlainString());   // 15.00 -> "15", 300000.00 -> "300000"
+            dong.setSoLuongGioiHan(d.getSoLuongGioiHan() == null ? "" : String.valueOf(d.getSoLuongGioiHan()));
+            dong.setSoLuongDaBan(d.getSoLuongDaBan() == null ? 0 : d.getSoLuongDaBan());
+            ds.add(dong);
+        }
+        return ds;
+    }
+
+    /**
+     * Tim san pham (bien the DANG_BAN) de tich chon: theo ma hang hoac ten san pham. Khong go gi = lay san pham dau tien theo ma hang.
+     * soLuong gioi han so dong tra ve de popup luon nhe du du lieu rat lon; muon thay them thi go tu khoa de thu hep.
+     * boQua = cac bien the da co san trong popup (khong tra lai).
+     */
+    public List<DongKhuyenMaiDTO> timSanPhamDeChon(String tuKhoa, int soLuong, Set<Long> boQua) {
+        BoLoc loc = new BoLoc().cotTim("maHang,sanPham.tenSanPham").tuKhoa(tuKhoa)
+                .cotTrangThai("trangThai").trangThai("DANG_BAN")
+                .sapXep("x.maHang asc").trang(1).kichThuoc(soLuong + (boQua == null ? 0 : boQua.size()));
+        List<DongKhuyenMaiDTO> ds = new ArrayList<>();
+        for (ChiTietSanPham sp : sanPhamRepo.timKiem(loc).getDanhSach()) {
+            if (boQua != null && boQua.contains(sp.getMaChiTietSanPham())) continue;
+            if (ds.size() >= soLuong) break;
+            ds.add(new DongKhuyenMaiDTO(sp));
+        }
+        return ds;
     }
 }

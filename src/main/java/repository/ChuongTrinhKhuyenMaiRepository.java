@@ -39,4 +39,16 @@ public class ChuongTrinhKhuyenMaiRepository extends BaseRepository<ChuongTrinhKh
             return ketThuc + batDau;
         });
     }
+
+    // note code nhu nay nhe ban: XOA chuong trinh = xoa cac dong san pham cua no truoc, roi xoa chuong trinh, trong 1 transaction
+    // (loi giua chung thi huy het). Chi goi sau khi KhuyenMaiService.xoaChuongTrinh da kiem tra khong co hoa don nao dung.
+    public void xoa(final Long maChuongTrinh) {
+        GiaoDich.chay(s -> {
+            s.createQuery("delete from ChiTietChuongTrinhKhuyenMai c where c.maChuongTrinhKhuyenMai = :id")
+                    .setParameter("id", maChuongTrinh).executeUpdate();
+            s.createQuery("delete from ChuongTrinhKhuyenMai c where c.maChuongTrinhKhuyenMai = :id")
+                    .setParameter("id", maChuongTrinh).executeUpdate();
+            return null;
+        });
+    }
 }

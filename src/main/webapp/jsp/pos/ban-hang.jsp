@@ -11,6 +11,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bán hàng tại quầy - PickHub POS</title>
     <link rel="stylesheet" href="${ctx}/assets/pos.css">
+    <%-- note code nhu nay nhe ban: moi o <select> trong trang deu tu co thanh tim kiem (select-search.js + select-search.css). Tat 1 o: them data-no-search --%>
+    <link rel="stylesheet" href="${ctx}/assets/select-search.css">
+    <script src="${ctx}/assets/select-search.js" defer></script>
     <script>var CTX = '${ctx}';</script>
     <script src="${ctx}/assets/pos.js" defer></script>
 </head>
@@ -96,7 +99,7 @@
                     <button class="btn line sm" id="btn-xoa-loc" type="button">Xóa bộ lọc</button>
                 </div>
             </div>
-            <div class="dau-ds"><span id="so-ket-qua">Đang tải...</span><span>Bấm vào mặt hàng để thêm vào hóa đơn</span></div>
+            <div class="dau-ds"><span id="so-ket-qua">Đang tải...</span><span>Bấm vào sản phẩm để chọn phân loại và thêm vào hóa đơn</span></div>
             <div class="luoi" id="luoi"></div>
             <div class="phan-trang" id="phan-trang"></div>
         </section>
@@ -108,8 +111,12 @@
 
             <div class="tong-ket">
                 <div class="phieu">
-                    <input id="o-phieu" type="text" placeholder="Mã giảm giá" maxlength="30">
+                    <input id="o-phieu" type="text" placeholder="Mã giảm giá" maxlength="30" autocomplete="off">
+                    <%-- note code nhu nay nhe ban: khung GOI Y voucher - pos.js do ket qua vao day khi bam vao / go vao o ma giam gia --%>
+                    <div class="goi-y" id="goi-y-phieu"></div>
                     <button class="btn line" id="btn-phieu" type="button">Áp dụng</button>
+                    <%-- nut mo popup "Xem va chon voucher" (yeu cau 6) --%>
+                    <button class="btn lime" id="btn-ds-phieu" type="button" title="Xem danh sách voucher đang dùng được và chọn">🎟 Voucher</button>
                 </div>
                 <div class="phieu-ok" id="phieu-ok" style="display:none"><span id="phieu-ok-ten"></span><a href="#" id="btn-bo-phieu" onclick="return false" style="text-decoration:underline">Bỏ mã</a></div>
                 <div class="dong-tien"><span>Tạm tính</span><span id="t-tamtinh">0 đ</span></div>
@@ -158,6 +165,39 @@
             <button class="btn lime" id="tc-in" type="button">🖨 In hóa đơn</button>
             <button class="btn line" id="tc-moi" type="button">Bán tiếp (Esc)</button>
         </div>
+    </div>
+</div>
+<%-- ================= POPUP XEM VA CHON VOUCHER =================
+     note code nhu nay nhe ban: popup nay chi la khung rong, noi dung do pos.js ve (ham moVoucher/veVoucher) sau khi goi
+     API GET /pos/api/phieu-giam-gia/danh-sach?tamTinh=... (PosPhieuDanhSachApiServlet). Esc hoac bam ra ngoai de dong. --%>
+<div class="lop-phu" id="lop-voucher">
+    <div class="hop-vc">
+        <div class="vc-dau">
+            <h2>🎟 Chọn voucher</h2>
+            <button type="button" class="vc-dong" id="vc-dong" title="Đóng (Esc)">✕</button>
+        </div>
+        <div class="vc-ghi-chu" id="vc-ghi-chu"></div>
+        <input type="text" id="vc-tim" placeholder="Tìm theo mã hoặc tên voucher..." autocomplete="off">
+        <div class="vc-ds" id="vc-ds"></div>
+    </div>
+</div>
+<%-- ================= POPUP CHON BIEN THE (phan loai) CUA 1 SAN PHAM =================
+     note code nhu nay nhe ban: khung rong, noi dung do pos.js ve (moPopupBienThe / veBienThe) khi bam vao the san pham co nhieu bien the.
+     Moi dong co o tang giam so luong + nut "Them"; so ton ben canh GIAM NGAY khi them vao hoa don. Esc / bam ra ngoai de dong. --%>
+<div class="lop-phu" id="lop-bt">
+    <div class="hop-bt">
+        <div class="bt-dau">
+            <div class="bt-anh"><img id="bt-anh" alt=""></div>
+            <div class="bt-tt">
+                <h2 id="bt-ten"></h2>
+                <div class="bt-hieu" id="bt-hieu"></div>
+                <div class="bt-gia" id="bt-gia"></div>
+            </div>
+            <button type="button" class="vc-dong" id="bt-dong" title="Đóng (Esc)">✕</button>
+        </div>
+        <div class="bt-loc" id="bt-loc"><input type="text" id="bt-tim" placeholder="Lọc phân loại (màu, khối lượng, mã hàng...)" autocomplete="off"></div>
+        <div class="bt-ds" id="bt-ds"></div>
+        <div class="bt-chan">Chọn số lượng rồi bấm <b>Thêm</b>. Có thể thêm nhiều phân loại liên tiếp, bấm Esc để đóng.</div>
     </div>
 </div>
 <div id="toast"></div>
