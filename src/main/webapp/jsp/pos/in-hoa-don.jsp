@@ -47,7 +47,7 @@
     <div class="giua">
         <div class="cua-hang">PICKHUB</div>
         <div>Vợt &amp; phụ kiện Pickleball chính hãng</div>
-        <div>Hotline: 1900 0000</div>
+        <div>Hotline: 0969830606</div>
     </div>
     <div class="gach"></div>
     <div class="giua"><b>HÓA ĐƠN BÁN HÀNG</b></div>
