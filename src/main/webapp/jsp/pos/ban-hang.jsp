@@ -11,6 +11,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bán hàng tại quầy - PickHub POS</title>
     <link rel="stylesheet" href="${ctx}/assets/pos.css">
+    <%-- note code nhu nay nhe ban: giao dien kinh mo xanh la (sang/toi). Nap SAU pos.css --%>
+    <%@ include file="/WEB-INF/theme-head.jspf" %>
+    <link rel="stylesheet" href="${ctx}/assets/pos-glass.css">
     <%-- note code nhu nay nhe ban: moi o <select> trong trang deu tu co thanh tim kiem (select-search.js + select-search.css). Tat 1 o: them data-no-search --%>
     <link rel="stylesheet" href="${ctx}/assets/select-search.css">
     <script src="${ctx}/assets/select-search.js" defer></script>
@@ -20,7 +23,7 @@
 <body>
 <div class="pos">
     <header class="pos-top">
-        <div class="logo">PICK<span>HUB</span> <span style="background:none;color:#94a3b8;font-weight:600;font-size:14px;padding:0">POS</span></div>
+        <div class="logo">PICK<span>HUB</span> <span class="pos-tag">POS</span></div>
         <div class="ca">Ca hôm nay: <b id="ca-so">${tongKet.soHoaDon}</b> hóa đơn · <b id="ca-tien"><fmt:formatNumber value="${tongKet.doanhThu}" pattern="#,##0"/></b> đ</div>
         <div class="phai">
             <span id="dong-ho"></span>
@@ -126,9 +129,9 @@
 
             <div class="thanh-toan">
                 <div class="pt-chon">
-                    <button type="button" data-pt="TIEN_MAT">💵 Tiền mặt</button>
-                    <button type="button" data-pt="CHUYEN_KHOAN">🏦 Chuyển khoản</button>
-                    <button type="button" data-pt="THE">💳 Quẹt thẻ</button>
+                    <button type="button" data-pt="TIEN_MAT">Tiền mặt</button>
+                    <button type="button" data-pt="CHUYEN_KHOAN">Chuyển khoản</button>
+                    <button type="button" data-pt="THE">Quẹt thẻ</button>
                 </div>
                 <div class="tien-dua" id="khu-tien-mat">
                     <div class="hang"><label for="o-dua">Khách đưa</label><input id="o-dua" type="text" inputmode="numeric" placeholder="0"></div>

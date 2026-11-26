@@ -1,0 +1,294 @@
+/* =====================================================================
+   PickHub ADMIN (/wp-admin) - lop giao dien KINH MO XANH LA, ghi de len admin.css
+   note code nhu nay nhe ban: KHONG doi HTML / ten class. File nay phai nap SAU admin.css va theme.css.
+   Selector giu nguyen nhu admin.css (cung do uu tien) nen file nao nap sau thi thang.
+   ===================================================================== */
+:root { --navy: #06210f; --navy-2: #0e3a1d; --lime: #4ade80; --blue: #15803d; --bg: transparent; --card: var(--ph-glass); --text: var(--ph-ink); --muted: var(--ph-muted); --line: var(--ph-line); --ok: var(--ph-ok); --warn: var(--ph-warn); --bad: var(--ph-bad); --radius: var(--ph-r-lg); }
+body { background: transparent;
+    color: var(--ph-ink); font-size: 15px; line-height: 1.5; }
+
+/* ---------- Sidebar: the kinh noi ben trai (van o ben trai, thu tu menu giu nguyen) ---------- */
+.sidebar { inset: 14px auto 14px 14px; width: 250px; padding: 20px 12px 0; border-radius: 26px; color: var(--ph-ink);
+    background: var(--ph-glass); border: 1px solid var(--ph-border); box-shadow: var(--ph-hl), var(--ph-shadow);
+    -webkit-backdrop-filter: blur(var(--ph-blur)) saturate(150%); backdrop-filter: blur(var(--ph-blur)) saturate(150%);
+    transition: width .34s var(--ph-ease); z-index: 20; }
+.logo { color: var(--ph-ink); font-size: 24px; padding: 2px 8px 22px; letter-spacing: -.01em; }
+.logo span { background: var(--ph-accent-fill); color: var(--ph-accent-fg); border-radius: 9px; padding: 0 8px; }
+.nav-item, .nav-group summary { color: var(--ph-ink-2); border-radius: 13px; padding: 11px 13px; font-weight: 500;
+    transition: background-color .2s, color .2s, transform .2s var(--ph-ease); }
+.nav-item:hover, .nav-group summary:hover { background: var(--ph-accent-soft); color: var(--ph-ink); }
+.nav-item:active, .nav-group summary:active { transform: scale(.98); }
+.nav-item.active { background: var(--ph-accent-fill); color: var(--ph-accent-fg); font-weight: 700; box-shadow: 0 6px 16px -6px var(--ph-ring); }
+.nav-group summary::after { transition: transform .25s var(--ph-ease); }
+.nav-sub { padding: 0 0 6px 36px; }
+.nav-sub a { color: var(--ph-muted); border-radius: 10px; transition: background-color .2s, color .2s, padding-left .2s var(--ph-ease); }
+.nav-sub a:hover { background: var(--ph-accent-soft); color: var(--ph-ink); padding-left: 14px; }
+.nav-sub a.active { color: var(--ph-accent); font-weight: 700; background: var(--ph-accent-soft); }
+.soon-tag { background: var(--ph-accent-soft-2); color: var(--ph-accent); }
+.nav-item.active .soon-tag { background: rgba(0, 0, 0, .16); color: var(--ph-accent-fg); }
+.user-box { border-top: 1px solid var(--ph-line); }
+.avatar { background: var(--ph-accent-fill); color: var(--ph-accent-fg); box-shadow: 0 0 0 3px var(--ph-accent-soft-2); }
+.user-box b { color: var(--ph-ink); }
+.user-box small { color: var(--ph-muted); }
+.user-box a { color: var(--ph-accent); font-weight: 600; text-decoration: underline; text-underline-offset: .2em; }
+
+/* ---------- Noi dung ---------- */
+.main { margin-left: 278px; padding: 28px 30px 44px; transition: margin-left .34s var(--ph-ease), opacity .2s ease, filter .2s ease, transform .2s ease; }
+.page-title { font-size: 28px; font-weight: 800; letter-spacing: -.02em; color: var(--ph-ink); margin-bottom: 22px; }
+.card { background: var(--ph-glass); border: 1px solid var(--ph-border); border-radius: var(--ph-r-lg); box-shadow: var(--ph-hl), var(--ph-shadow); color: var(--ph-ink);
+    -webkit-backdrop-filter: blur(var(--ph-blur)) saturate(150%); backdrop-filter: blur(var(--ph-blur)) saturate(150%); position: relative; }
+.card h3 { font-weight: 700; letter-spacing: -.01em; }
+.section-title { font-weight: 800; letter-spacing: -.01em; color: var(--ph-ink); margin-top: 30px; }
+.stat .ico { background: var(--ph-accent-soft); color: var(--ph-accent); border-radius: 14px; }
+.stat span { color: var(--ph-muted); }
+.stat strong { font-size: 26px; font-weight: 800; letter-spacing: -.02em; }
+.stat.soon strong { color: var(--ph-warn); font-size: 18px; }
+/* the bam duoc: noi len 3px khi hover (nhu clip mau). ::after la "cau" 6px o day the de con tro khong bi roi khoi the khi no nhich len */
+.card.stat, a.stat, .tile, .mini-stats a.box, .img-card { transition: transform .28s var(--ph-ease), box-shadow .28s var(--ph-ease), border-color .2s; }
+.card.stat::after, .tile::after, .mini-stats a.box::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 6px; }
+.card.stat:hover, a.stat:hover, .tile:hover, .mini-stats a.box:hover { transform: translateY(-3px); box-shadow: var(--ph-hl), var(--ph-shadow-hover); border-color: var(--ph-accent-soft-2); }
+a.stat:hover { box-shadow: var(--ph-hl), var(--ph-shadow-hover); }
+
+/* ---------- Bieu do cot ---------- */
+.tabs { display: inline-flex; gap: 2px; padding: 3px; border-radius: 99px; background: var(--ph-glass-2); border: 1px solid var(--ph-line); }
+.tabs a { padding: 5px 14px; border-radius: 99px; color: var(--ph-muted); font-weight: 600; transition: background-color .2s, color .2s; }
+.tabs a:hover { color: var(--ph-ink); }
+.tabs a.on { background: var(--ph-accent-fill); color: var(--ph-accent-fg); }
+.bar-val { color: var(--ph-muted); font-variant-numeric: tabular-nums; }
+.bar { background: linear-gradient(180deg, color-mix(in srgb, var(--ph-accent-fill) 78%, transparent), color-mix(in srgb, var(--ph-accent-fill) 38%, transparent));
+    border-radius: 11px 11px 4px 4px; transform-origin: bottom; animation: ph-grow .75s var(--ph-ease) both; animation-delay: calc(var(--i, 0) * 60ms + 160ms);
+    transition: filter .2s; }
+.bar:hover { filter: brightness(1.08); }
+.bar.now { background: var(--ph-accent-fill); box-shadow: 0 8px 20px -8px var(--ph-ring); }
+.bar-label { color: var(--ph-muted); }
+
+/* ---------- Can xu ly ---------- */
+.todo li a { border-bottom: 1px solid var(--ph-line); border-radius: 0; transition: padding-left .2s var(--ph-ease), color .2s; }
+.todo li a:hover { padding-left: 8px; color: var(--ph-accent); }
+.todo .count { background: var(--ph-accent-fill); color: var(--ph-accent-fg); }
+.todo .count.zero { background: var(--ph-gray-bg); color: var(--ph-gray-fg); }
+
+/* ---------- Bang ---------- */
+.tbl th { background: var(--ph-glass-2); color: var(--ph-muted); font-size: 12.5px; letter-spacing: .02em; font-weight: 700; }
+.tbl td { border-bottom: 1px solid var(--ph-line); }
+.tbl tr:hover td { background: var(--ph-accent-soft); }
+.tbl td, .tbl th { transition: background-color .15s; }
+.tbl .code { color: var(--ph-ink); }
+a.code:hover { color: var(--ph-accent); }
+.empty { color: var(--ph-muted); }
+.thumb { background: var(--ph-gray-bg); border-radius: 12px; }
+
+/* ---------- Badge trang thai (giu nguyen y nghia mau cu) ---------- */
+.badge { background: var(--ph-info-bg); color: var(--ph-info-fg); }
+.badge.CHO_XAC_NHAN, .badge.SAP_CHAY, .badge.blue { background: var(--ph-info-bg); color: var(--ph-info-fg); }
+.badge.DA_XAC_NHAN { background: var(--ph-violet-bg); color: var(--ph-violet-fg); }
+.badge.DANG_GIAO, .badge.CHUA_XAC_THUC, .badge.TAM_DUNG, .badge.orange { background: var(--ph-warn-bg); color: var(--ph-warn-fg); }
+.badge.HOAN_THANH, .badge.HOAT_DONG, .badge.DANG_BAN, .badge.DANG_CHAY, .badge.DA_SU_DUNG, .badge.green { background: var(--ph-ok-bg); color: var(--ph-ok-fg); }
+.badge.DA_HUY, .badge.KHOA, .badge.HET_HANG, .badge.red { background: var(--ph-bad-bg); color: var(--ph-bad-fg); }
+.badge.GIO_HANG, .badge.NGUNG, .badge.NGUNG_BAN, .badge.KET_THUC, .badge.HET_HAN, .badge.DA_HOAN, .badge.gray { background: var(--ph-gray-bg); color: var(--ph-gray-fg); }
+
+/* ---------- Form / nut ---------- */
+input[type=text], input[type=email], input[type=password], input[type=number], input[type=date], input[type=url], input[type=tel], select, textarea,
+.fld input[type=text], .fld input[type=number], .fld input[type=password], .fld input[type=email], .fld input[type=date], .fld input[type=url], .fld input[type=tel], .fld select, .fld textarea,
+.img-card input, .stock-forms input[type=number], .km-giatri, .km-sl, .km-o-tim input {
+    background-color: var(--ph-field-bg); color: var(--ph-ink); border: 1px solid var(--ph-field-border); border-radius: 12px;
+    transition: border-color .2s, box-shadow .2s, background-color .2s; }
+input::placeholder, textarea::placeholder { color: var(--ph-muted); opacity: .85; }
+input:focus, select:focus, textarea:focus, .fld input:focus, .fld select:focus, .fld textarea:focus, .km-o-tim input:focus {
+    outline: none; border-color: var(--ph-accent-fill); box-shadow: 0 0 0 4px var(--ph-ring); }
+.fld input:disabled, .km-giatri:disabled, .km-sl:disabled { background: var(--ph-gray-bg); color: var(--ph-muted); }
+.fld label { color: var(--ph-ink-2); }
+.fld label .req { color: var(--ph-bad); }
+.form-grid label { color: var(--ph-ink-2); }
+
+.btn { background: var(--ph-ink); color: var(--ph-bg-1); border-radius: 12px; font-weight: 700; box-shadow: 0 1px 2px rgba(0, 0, 0, .12);
+    transition: transform .18s var(--ph-ease), box-shadow .2s, background-color .2s, color .2s, opacity .2s; }
+.btn:hover { opacity: 1; transform: translateY(-1px); box-shadow: 0 8px 18px -8px rgba(0, 0, 0, .35); }
+.btn:active { transform: translateY(0) scale(.97); box-shadow: none; }
+.btn.lime, .btn.blue { background: var(--ph-accent-fill); color: var(--ph-accent-fg); box-shadow: var(--ph-hl), 0 6px 16px -8px var(--ph-ring); }
+.btn.lime:hover, .btn.blue:hover { background: var(--ph-accent-hover); box-shadow: var(--ph-hl), 0 10px 22px -8px var(--ph-ring); }
+.btn.line { background: var(--ph-glass-2); color: var(--ph-ink); border: 1px solid var(--ph-field-border); box-shadow: none; }
+.btn.line:hover { border-color: var(--ph-accent-fill); color: var(--ph-accent); }
+.btn.warn { background: var(--ph-warn-bg); color: var(--ph-warn-fg); box-shadow: none; }
+.btn.danger { background: var(--ph-bad-bg); color: var(--ph-bad-fg); box-shadow: none; }
+.btn.danger:hover { background: var(--ph-bad); color: #fff; }
+.btn[disabled], .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn:focus-visible { outline: 2px solid var(--ph-accent-fill); outline-offset: 2px; }
+
+.alert { border-radius: 14px; animation: ph-slide-down .4s var(--ph-ease) both; }
+.alert.ok { background: var(--ph-ok-bg); color: var(--ph-ok-fg); }
+.alert.loi { background: var(--ph-bad-bg); color: var(--ph-bad-fg); }
+.pager a { background: var(--ph-glass-2); border: 1px solid var(--ph-line); color: var(--ph-ink); border-radius: 10px; transition: background-color .2s, transform .2s var(--ph-ease); }
+.pager a:hover { border-color: var(--ph-accent-fill); transform: translateY(-1px); }
+.pager a.on { background: var(--ph-accent-fill); color: var(--ph-accent-fg); border-color: var(--ph-accent-fill); }
+
+/* ---------- Chi tiet ---------- */
+.back { color: var(--ph-accent); }
+.back:hover { text-decoration: underline; }
+.timeline li { border-left-color: var(--ph-line); }
+.timeline li::before { background: var(--ph-accent-fill); box-shadow: 0 0 0 4px var(--ph-accent-soft); }
+.tile { background: var(--ph-glass); border: 1px solid var(--ph-border); border-radius: 18px; box-shadow: var(--ph-hl), var(--ph-shadow); position: relative;
+    -webkit-backdrop-filter: blur(var(--ph-blur)); backdrop-filter: blur(var(--ph-blur)); }
+.tile b { font-weight: 800; letter-spacing: -.02em; }
+.coming .pill { background: var(--ph-accent-fill); color: var(--ph-accent-fg); }
+
+/* trang loi (404/403/500 cua admin dung .login-page + .login-box) */
+.login-page { background: transparent; }
+.login-box { background: var(--ph-glass); border: 1px solid var(--ph-border); border-radius: 28px; box-shadow: var(--ph-hl), var(--ph-shadow-hover);
+    -webkit-backdrop-filter: blur(24px) saturate(150%); backdrop-filter: blur(24px) saturate(150%); color: var(--ph-ink); animation: ph-pop .5s var(--ph-ease) both; }
+.login-box .logo { color: var(--ph-ink); }
+.login-box .logo span { background: var(--ph-accent-fill); color: var(--ph-accent-fg); }
+
+/* ---------- Mo rong: san pham, bo loc, ton kho, tai khoan, phieu giam gia ---------- */
+.hint { color: var(--ph-muted); }
+.chip-group span { background: var(--ph-glass-2); border: 1px solid var(--ph-field-border); color: var(--ph-ink-2); transition: background-color .2s, color .2s, border-color .2s, transform .15s var(--ph-ease); }
+.chip-group label:hover span { border-color: var(--ph-accent-fill); }
+.chip-group input:checked + span { background: var(--ph-accent-fill); border-color: var(--ph-accent-fill); color: var(--ph-accent-fg); }
+.chip-group input:focus-visible + span { outline: 2px solid var(--ph-accent-fill); outline-offset: 2px; }
+.filter-row { border-top-color: var(--ph-line); }
+.active-filters .tag { background: var(--ph-accent-soft); color: var(--ph-accent); }
+.active-filters .lbl { color: var(--ph-muted); }
+.sp-cell .thumb { border: 1px solid var(--ph-line); }
+.sp-cell .ten:hover { color: var(--ph-accent); }
+.sp-cell .slug { color: var(--ph-muted); }
+.pager .gap { color: var(--ph-muted); }
+.switch-row { background: var(--ph-glass-2); border: 1px solid var(--ph-line); border-radius: 14px; }
+.switch-row span { color: var(--ph-muted); }
+.form-foot { border-top-color: var(--ph-line); }
+.form-card h3 small { color: var(--ph-muted); }
+.img-card { background: var(--ph-glass-2); border: 1px solid var(--ph-line); border-radius: 16px; }
+.img-card img { background: var(--ph-gray-bg); }
+.img-card .path { color: var(--ph-muted); }
+.img-card details summary { color: var(--ph-accent); }
+.img-card:hover { transform: translateY(-3px); box-shadow: var(--ph-shadow-hover); }
+.mini-stats .box { background: var(--ph-glass); border: 1px solid var(--ph-border); border-radius: 18px; box-shadow: var(--ph-hl), var(--ph-shadow); position: relative;
+    -webkit-backdrop-filter: blur(var(--ph-blur)); backdrop-filter: blur(var(--ph-blur)); }
+.mini-stats .box span { color: var(--ph-muted); }
+.mini-stats .box.warn b, .qty.low { color: var(--ph-warn); }
+.qty.zero { color: var(--ph-bad); }
+.profile-card .avatar-lg { background: var(--ph-accent-fill); color: var(--ph-accent-fg); box-shadow: 0 0 0 6px var(--ph-accent-soft-2); }
+.profile-card .mail { color: var(--ph-muted); }
+.profile-meta { border-top-color: var(--ph-line); }
+.profile-meta div span { color: var(--ph-muted); }
+.tabs-nav { border-bottom-color: var(--ph-line); }
+.tabs-nav a { color: var(--ph-muted); transition: color .2s, border-color .2s; }
+.tabs-nav a:hover, .tabs-nav a.on { color: var(--ph-ink); }
+.tabs-nav a.on { border-bottom-color: var(--ph-accent-fill); }
+.panel-sub, .rule-list, .show-pass { color: var(--ph-muted); }
+.limit-box { background: var(--ph-accent-soft); border: 1px solid var(--ph-accent-soft-2); border-radius: 16px; }
+.limit-box h4 { color: var(--ph-accent); }
+.usage-bar { background: var(--ph-gray-bg); }
+.usage-bar i { background: var(--ph-accent-fill); }
+.usage-bar.full i { background: var(--ph-bad); }
+
+/* ---------- Khuyen mai: popup them / sua ---------- */
+.km-o-tim input { background-color: var(--ph-field-bg); }
+.km-nen { background: var(--ph-overlay); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: ph-fade .25s ease both; }
+.km-hop { background: var(--ph-glass-2); border: 1px solid var(--ph-border); border-radius: 26px; color: var(--ph-ink);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .35); -webkit-backdrop-filter: blur(28px) saturate(150%); backdrop-filter: blur(28px) saturate(150%);
+    animation: ph-pop .35s var(--ph-ease) both; }
+.km-x { background: var(--ph-gray-bg); color: var(--ph-ink-2); transition: background-color .2s, color .2s, transform .2s var(--ph-ease); }
+.km-x:hover { background: var(--ph-accent-fill); color: var(--ph-accent-fg); transform: rotate(90deg); }
+.km-gach { border-top-color: var(--ph-line); }
+.km-khoa { background: var(--ph-warn-bg); color: var(--ph-warn-fg); }
+.km-chi-chon { color: var(--ph-ink-2); }
+.km-bang-wrap { border: 1px solid var(--ph-line); border-radius: 16px; }
+.km-bang thead th { background: var(--ph-glass-solid); color: var(--ph-muted); border-bottom-color: var(--ph-line); }
+.km-bang td { border-bottom-color: var(--ph-line); }
+.km-dong:hover { background: var(--ph-accent-soft); }
+.km-dong.chon { background: var(--ph-accent-soft-2); }
+.km-phu { color: var(--ph-muted); }
+.km-loai { border-color: var(--ph-field-border); background: var(--ph-field-bg); }
+.km-loai span { color: var(--ph-muted); }
+.km-loai input:checked + span { background: var(--ph-accent-fill); color: var(--ph-accent-fg); }
+.km-ghi-chu { color: var(--ph-muted); }
+.km-chan { border-top-color: var(--ph-line); background: transparent; }
+.km-tong { color: var(--ph-ink-2); }
+.km-tong b { color: var(--ph-ink); }
+
+/* =====================================================================
+   HIEU UNG VAO TRANG (ngan, co gioi han): chi dung opacity/transform/blur.
+   note code nhu nay nhe ban: neu JS loi thi noi dung van hien (animation chi la "tu mo -> ro"), khong an trang.
+   ===================================================================== */
+.main > *:not(.km-nen), .grid-4 > *, .grid-2 > *, .grid-2e > *, .tiles > *, .mini-stats > *, .form-layout > *, .profile-wrap > *, .img-grid > * {
+    animation: ph-rise .5s var(--ph-ease) both; animation-delay: calc(var(--i, 0) * 55ms); }
+.tbl tr:nth-child(-n+12) { animation: ph-fade .4s ease both; animation-delay: calc(var(--i, 0) * 28ms + 120ms); }
+/* chuyen trang: JS them lop .ph-leave len .main -> mo nhoe nhanh (0.2s) roi moi chuyen link */
+.main.ph-leave { opacity: 0; filter: blur(8px); transform: translateY(6px); pointer-events: none; }
+
+/* ---------- Cong tac sang/toi trong sidebar (them bang JS) ---------- */
+.ph-tools { margin-top: auto; padding: 10px 6px 12px; }
+.ph-tools + .user-box { margin-top: 0; }
+.ph-tool-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 8px 8px 13px; border-radius: 13px; overflow: hidden;
+    background: var(--ph-glass-2); border: 1px solid var(--ph-line); }
+.ph-tool-label { font-size: 13.5px; font-weight: 600; color: var(--ph-ink-2); white-space: nowrap; }
+/* muc menu cha co trang dang mo ben trong thi sang len (de nhan ra khi sidebar dang thu gon) */
+.nav-group:has(.nav-sub a.active) > summary { background: var(--ph-accent-soft); color: var(--ph-accent); }
+
+/* =====================================================================
+   SIDEBAR TU THU GON (man hinh > 760px)
+   note code nhu nay nhe ban: mac dinh chi con ICON (rong 70px). Re chuot vao (hoac Tab vao bang ban phim) thi mo rong ra 250px
+   dung nhu cu, de len tren noi dung (khong day noi dung) nen trang khong bi giat. Chuot ra ngoai thi tu thu lai.
+   Nhan chu cua menu duoc JS boc vao <span class="ph-lbl"> de co the lam mo/hien muot.
+   ===================================================================== */
+@keyframes ph-wrapnow { to { white-space: normal; } }
+@media (min-width: 761px) {
+    .sidebar { width: 70px; overflow: hidden; transition: width .34s var(--ph-ease), box-shadow .34s var(--ph-ease), background-color .3s ease; }
+    .main { margin-left: 106px; }
+    .sidebar:hover, .sidebar:focus-within { width: 250px; background: var(--ph-glass-2); box-shadow: var(--ph-hl), 0 30px 80px -20px rgba(0, 0, 0, .4); }   /* nen dac hon vi dang de len noi dung */
+
+    /* chu o muc menu: thu gon thi an, mo rong thi hien dan */
+    .nav-item .ph-lbl, .nav-group summary .ph-lbl { white-space: nowrap; overflow: hidden; min-width: 0; max-width: 0; opacity: 0;
+        transition: max-width .34s var(--ph-ease), opacity .15s ease; }
+    .sidebar:hover .ph-lbl, .sidebar:focus-within .ph-lbl { max-width: 190px; opacity: 1; transition: max-width .34s var(--ph-ease), opacity .25s ease .08s;
+        animation: ph-wrapnow .01s linear .34s forwards; }   /* dang mo rong thi giu 1 dong; mo xong moi cho xuong dong nhu ban cu (vd 'Giam gia, khuyen mai' 2 dong) */
+    .nav-group summary::after { opacity: 0; transition: transform .25s var(--ph-ease), opacity .2s ease; }
+    .sidebar:hover .nav-group summary::after, .sidebar:focus-within .nav-group summary::after { opacity: 1; transition: transform .25s var(--ph-ease), opacity .25s ease .1s; }
+    .soon-tag { max-width: 0; padding-left: 0; padding-right: 0; opacity: 0; overflow: hidden; transition: max-width .3s var(--ph-ease), padding .3s var(--ph-ease), opacity .2s ease; }
+    .sidebar:hover .soon-tag, .sidebar:focus-within .soon-tag { max-width: 90px; padding-left: 7px; padding-right: 7px; opacity: 1; }
+    .sidebar:not(:hover):not(:focus-within) .nav-sub { display: none; }            /* menu con chi hien khi mo rong */
+
+    /* logo: thu gon thi chi con o "PH" */
+    .logo { transition: none; }
+    .sidebar:not(:hover):not(:focus-within) .logo { font-size: 0; padding: 2px 0 22px; }
+    .sidebar:not(:hover):not(:focus-within) .logo span { display: none; }
+    .sidebar:not(:hover):not(:focus-within) .logo::before { content: "PH"; font-size: 16px; font-weight: 900; letter-spacing: .02em; width: 46px; height: 40px; display: grid; place-items: center;
+        background: var(--ph-accent-fill); color: var(--ph-accent-fg); border-radius: 12px; }
+    .sidebar:hover .logo, .sidebar:focus-within .logo { animation: ph-fade .3s ease both; }
+
+    /* khoi tai khoan: avatar dung yen, phan chu hien dan */
+    .user-box { padding-left: 3px; padding-right: 3px; }
+    .user-box > div:last-child { max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; transition: max-width .34s var(--ph-ease), opacity .15s ease; }
+    .sidebar:hover .user-box > div:last-child, .sidebar:focus-within .user-box > div:last-child { max-width: 170px; opacity: 1; transition: max-width .34s var(--ph-ease), opacity .25s ease .08s; }
+
+    /* hang "Che do toi": thu gon thi chi con cong tac nho */
+    .ph-tools { padding-left: 0; padding-right: 0; }
+    .sidebar:not(:hover):not(:focus-within) .ph-tool-row { padding: 6px 2px; justify-content: center; }
+    .sidebar:not(:hover):not(:focus-within) .ph-tool-label { display: none; }
+    .sidebar:not(:hover):not(:focus-within) .ph-tool-row .ph-switch { width: 40px; }
+    .sidebar:not(:hover):not(:focus-within) .ph-tool-row .ph-switch[aria-checked="true"] .ph-switch-knob { transform: translateX(16px); }
+}
+
+/* ---------- Man hinh nho: sidebar nam tren dau, day du chu nhu cu ---------- */
+@media (max-width: 1100px) { .main { padding: 24px 20px 40px; } }
+@media (max-width: 760px) {
+    .sidebar { position: static; width: auto; margin: 12px; border-radius: 22px; overflow: visible; }
+    .main { margin-left: 0; padding: 16px; }
+}
+
+/* so thu tu cho stagger: phan tu thu n tre them n*55ms (toi da 10 buoc de khong phai cho lau) */
+.main > *:nth-child(1), .grid-4 > *:nth-child(1), .grid-2 > *:nth-child(1), .grid-2e > *:nth-child(1), .tiles > *:nth-child(1), .mini-stats > *:nth-child(1), .form-layout > *:nth-child(1), .profile-wrap > *:nth-child(1), .img-grid > *:nth-child(1), .bars > .bar-col:nth-child(1), .tbl tr:nth-child(1) { --i: 0; }
+.main > *:nth-child(2), .grid-4 > *:nth-child(2), .grid-2 > *:nth-child(2), .grid-2e > *:nth-child(2), .tiles > *:nth-child(2), .mini-stats > *:nth-child(2), .form-layout > *:nth-child(2), .profile-wrap > *:nth-child(2), .img-grid > *:nth-child(2), .bars > .bar-col:nth-child(2), .tbl tr:nth-child(2) { --i: 1; }
+.main > *:nth-child(3), .grid-4 > *:nth-child(3), .grid-2 > *:nth-child(3), .grid-2e > *:nth-child(3), .tiles > *:nth-child(3), .mini-stats > *:nth-child(3), .form-layout > *:nth-child(3), .profile-wrap > *:nth-child(3), .img-grid > *:nth-child(3), .bars > .bar-col:nth-child(3), .tbl tr:nth-child(3) { --i: 2; }
+.main > *:nth-child(4), .grid-4 > *:nth-child(4), .grid-2 > *:nth-child(4), .grid-2e > *:nth-child(4), .tiles > *:nth-child(4), .mini-stats > *:nth-child(4), .form-layout > *:nth-child(4), .profile-wrap > *:nth-child(4), .img-grid > *:nth-child(4), .bars > .bar-col:nth-child(4), .tbl tr:nth-child(4) { --i: 3; }
+.main > *:nth-child(5), .grid-4 > *:nth-child(5), .grid-2 > *:nth-child(5), .grid-2e > *:nth-child(5), .tiles > *:nth-child(5), .mini-stats > *:nth-child(5), .form-layout > *:nth-child(5), .profile-wrap > *:nth-child(5), .img-grid > *:nth-child(5), .bars > .bar-col:nth-child(5), .tbl tr:nth-child(5) { --i: 4; }
+.main > *:nth-child(6), .grid-4 > *:nth-child(6), .grid-2 > *:nth-child(6), .grid-2e > *:nth-child(6), .tiles > *:nth-child(6), .mini-stats > *:nth-child(6), .form-layout > *:nth-child(6), .profile-wrap > *:nth-child(6), .img-grid > *:nth-child(6), .bars > .bar-col:nth-child(6), .tbl tr:nth-child(6) { --i: 5; }
+.main > *:nth-child(7), .grid-4 > *:nth-child(7), .grid-2 > *:nth-child(7), .grid-2e > *:nth-child(7), .tiles > *:nth-child(7), .mini-stats > *:nth-child(7), .form-layout > *:nth-child(7), .profile-wrap > *:nth-child(7), .img-grid > *:nth-child(7), .bars > .bar-col:nth-child(7), .tbl tr:nth-child(7) { --i: 6; }
+.main > *:nth-child(8), .grid-4 > *:nth-child(8), .grid-2 > *:nth-child(8), .grid-2e > *:nth-child(8), .tiles > *:nth-child(8), .mini-stats > *:nth-child(8), .form-layout > *:nth-child(8), .profile-wrap > *:nth-child(8), .img-grid > *:nth-child(8), .bars > .bar-col:nth-child(8), .tbl tr:nth-child(8) { --i: 7; }
+.main > *:nth-child(9), .grid-4 > *:nth-child(9), .grid-2 > *:nth-child(9), .grid-2e > *:nth-child(9), .tiles > *:nth-child(9), .mini-stats > *:nth-child(9), .form-layout > *:nth-child(9), .profile-wrap > *:nth-child(9), .img-grid > *:nth-child(9), .bars > .bar-col:nth-child(9), .tbl tr:nth-child(9) { --i: 8; }
+.main > *:nth-child(10), .grid-4 > *:nth-child(10), .grid-2 > *:nth-child(10), .grid-2e > *:nth-child(10), .tiles > *:nth-child(10), .mini-stats > *:nth-child(10), .form-layout > *:nth-child(10), .profile-wrap > *:nth-child(10), .img-grid > *:nth-child(10), .bars > .bar-col:nth-child(10), .tbl tr:nth-child(10) { --i: 9; }
+
+/* ---------- Nhan trang thai trong bang (Het hang / Dang ban / Ngung ban...): cham mau + khong tran cot ---------- */
+.tbl td .badge { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; padding: 4px 12px 4px 10px; line-height: 1.3; }
+.tbl td .badge::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: .85; }
+.tbl th:nth-child(7), .tbl td:nth-child(7) { min-width: 128px; }

@@ -9,6 +9,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Hóa đơn ${hoaDon.maTraCuu}</title>
+    <%-- note code nhu nay nhe ban: hoa don IN RA giay giu nguyen den tren trang, chi them bieu tuong tab --%>
+    <link rel="icon" href="${ctx}/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="${ctx}/favicon.ico" sizes="any">
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; background: #e5e7eb; font-family: "Courier New", Consolas, monospace; color: #000; }

@@ -1,0 +1,8 @@
+<%-- note code nhu nay nhe ban: DOAN DUNG CHUNG chen vao <head> cua moi layout (include tinh). Can bien ${ctx} da khai bao truoc do. --%>
+<%-- 1) Dat che do sang/toi NGAY TRUOC khi ve trang de khong bi nhay mau. Chi doc localStorage cua trinh duyet, khong gui gi len server. --%>
+<script>(function(){var d=document.documentElement;try{var t=localStorage.getItem('ph-theme');if(t!=='dark'&&t!=='light'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}d.setAttribute('data-theme',t);}catch(e){d.setAttribute('data-theme','light')}})();</script>
+<link rel="icon" href="${ctx}/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="${ctx}/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="${ctx}/apple-touch-icon.png">
+<link rel="stylesheet" href="${ctx}/assets/theme.css">
+<script src="${ctx}/assets/theme.js" defer></script>

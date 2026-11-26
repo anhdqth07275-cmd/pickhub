@@ -11,10 +11,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hóa đơn đã bán - PickHub POS</title>
     <link rel="stylesheet" href="${ctx}/assets/pos.css">
+    <%-- note code nhu nay nhe ban: giao dien kinh mo xanh la (sang/toi). Nap SAU pos.css --%>
+    <%@ include file="/WEB-INF/theme-head.jspf" %>
+    <link rel="stylesheet" href="${ctx}/assets/pos-glass.css">
 </head>
 <body style="height:auto">
 <header class="pos-top">
-    <div class="logo">PICK<span>HUB</span> <span style="background:none;color:#94a3b8;font-weight:600;font-size:14px;padding:0">POS</span></div>
+    <div class="logo">PICK<span>HUB</span> <span class="pos-tag">POS</span></div>
     <div class="phai">
         <span>👤 <b><c:out value="${sessionScope.nhanVien.hoTen}"/></b></span>
         <a href="${ctx}/pos">← Về màn hình bán hàng</a>
@@ -28,7 +31,7 @@
         <div><label>Từ ngày</label><input type="date" name="tuNgay" value="${tuNgay}"></div>
         <div><label>Đến ngày</label><input type="date" name="denNgay" value="${denNgay}"></div>
         <c:if test="${laQuanLy}">
-            <div><label>&nbsp;</label><label style="display:flex;gap:6px;align-items:center;color:#1e293b;font-weight:600"><input type="checkbox" name="tatCa" value="1" style="width:auto" ${xemTatCa ? 'checked' : ''}> Tất cả nhân viên</label></div>
+            <div><label>&nbsp;</label><label class="chk-tat-ca"><input type="checkbox" name="tatCa" value="1" style="width:auto" ${xemTatCa ? 'checked' : ''}> Tất cả nhân viên</label></div>
         </c:if>
         <div style="min-width:auto"><label>&nbsp;</label><button class="btn lime" type="submit">Xem</button></div>
     </form>

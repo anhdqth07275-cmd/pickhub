@@ -1,0 +1,112 @@
+/* =====================================================================
+   PickHub TRANG BAN HANG / TAI KHOAN KHACH - kinh mo xanh la, ghi de len cua-hang.css va frontend.css
+   note code nhu nay nhe ban: KHONG doi HTML / ten class. Nap SAU cua-hang.css (hoac frontend.css) va theme.css.
+   ===================================================================== */
+:root { --navy: #06210f; --lime: #4ade80; --blue: #15803d; --bg: transparent; --line: var(--ph-line); --muted: var(--ph-muted); --bad: var(--ph-bad); --ok: var(--ph-ok); }
+body { color: var(--ph-ink); line-height: 1.5; background: transparent; }
+
+/* ---------- Thanh tren cung (header): thanh kinh dinh khi cuon ---------- */
+.top { background: var(--ph-glass-2); color: var(--ph-ink); border-bottom: 1px solid var(--ph-line); box-shadow: 0 8px 28px -14px rgba(21, 83, 45, .25);
+    -webkit-backdrop-filter: blur(var(--ph-blur)) saturate(150%); backdrop-filter: blur(var(--ph-blur)) saturate(150%); }
+.logo, .brand { color: var(--ph-ink); letter-spacing: -.01em; }
+.logo span { background: var(--ph-accent-fill); color: var(--ph-accent-fg); border-radius: 9px; }
+.brand span { color: var(--ph-accent-fg); background: var(--ph-accent-fill); border-radius: 7px; padding: 0 6px; margin-left: 2px; }
+.top nav a { color: var(--ph-ink-2); font-weight: 500; position: relative; transition: color .2s; }
+.top nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px; border-radius: 2px; background: var(--ph-accent-fill); transform: scaleX(0); transition: transform .3s var(--ph-ease); }
+.top nav a.on, .top nav a:hover { color: var(--ph-accent); }
+.top nav a.on::after, .top nav a:hover::after { transform: scaleX(1); }
+.top .right a { color: var(--ph-ink); transition: color .2s; }
+.top .right a:hover { color: var(--ph-accent); }
+.top .right { gap: 16px; }
+.cart, .top .right a.cart { background: var(--ph-accent-fill); color: var(--ph-accent-fg) !important; font-weight: 800; border-radius: 99px; box-shadow: var(--ph-hl), 0 6px 16px -8px var(--ph-ring);
+    transition: transform .2s var(--ph-ease), box-shadow .2s, background-color .2s; }
+.cart:hover { background: var(--ph-accent-hover); transform: translateY(-1px); }
+.cart:active { transform: scale(.97); }
+.cart b { display: inline-block; min-width: 1.4em; text-align: center; background: rgba(0, 0, 0, .16); border-radius: 99px; padding: 0 6px; }
+footer { color: var(--ph-muted); }
+
+/* ---------- Khung noi dung, the, thong bao ---------- */
+h1 { font-weight: 800; letter-spacing: -.02em; color: var(--ph-ink); }
+.card { background: var(--ph-glass); border: 1px solid var(--ph-border); border-radius: var(--ph-r-lg); box-shadow: var(--ph-hl), var(--ph-shadow); color: var(--ph-ink); position: relative;
+    -webkit-backdrop-filter: blur(var(--ph-blur)) saturate(150%); backdrop-filter: blur(var(--ph-blur)) saturate(150%); }
+.muted { color: var(--ph-muted); }
+.alert { border-radius: 14px; animation: ph-slide-down .4s var(--ph-ease) both; }
+.alert.ok, .ok { background: var(--ph-ok-bg); color: var(--ph-ok-fg); }
+.alert.loi, .error { background: var(--ph-bad-bg); color: var(--ph-bad-fg); }
+.alert.warn { background: var(--ph-warn-bg); color: var(--ph-warn-fg); }
+
+/* ---------- Nut / o nhap ---------- */
+.btn { background: var(--ph-ink); color: var(--ph-bg-1); border-radius: 12px; box-shadow: 0 1px 2px rgba(0, 0, 0, .12);
+    transition: transform .18s var(--ph-ease), box-shadow .2s, background-color .2s, color .2s; }
+.btn:hover { transform: translateY(-1px); box-shadow: 0 8px 18px -8px rgba(0, 0, 0, .35); }
+.btn:active { transform: translateY(0) scale(.97); box-shadow: none; }
+.btn.lime { background: var(--ph-accent-fill); color: var(--ph-accent-fg); box-shadow: var(--ph-hl), 0 6px 16px -8px var(--ph-ring); }
+.btn.lime:hover { background: var(--ph-accent-hover); box-shadow: var(--ph-hl), 0 10px 22px -8px var(--ph-ring); }
+.btn.line { background: var(--ph-glass-2); color: var(--ph-ink); border: 1px solid var(--ph-field-border); box-shadow: none; }
+.btn.line:hover { border-color: var(--ph-accent-fill); color: var(--ph-accent); }
+.btn.danger { background: var(--ph-bad-bg); color: var(--ph-bad-fg); box-shadow: none; }
+.btn.danger:hover { background: var(--ph-bad); color: #fff; }
+.btn[disabled] { opacity: .5; transform: none; box-shadow: none; }
+input[type=text], input[type=email], input[type=password], input[type=number], input[type=date], textarea, select {
+    background-color: var(--ph-field-bg); color: var(--ph-ink); border: 1px solid var(--ph-field-border); border-radius: 12px; font-family: inherit;
+    transition: border-color .2s, box-shadow .2s, background-color .2s; }
+input::placeholder, textarea::placeholder { color: var(--ph-muted); opacity: .85; }
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--ph-accent-fill); box-shadow: 0 0 0 4px var(--ph-ring); }
+input:disabled { background: var(--ph-gray-bg); color: var(--ph-muted); }
+
+/* ---------- Cua hang: luoi san pham ---------- */
+.sp { transition: transform .3s var(--ph-ease), box-shadow .3s var(--ph-ease), border-color .2s; }
+.sp::after { content: ""; position: absolute; left: 0; right: 0; bottom: -8px; height: 8px; }   /* cau de con tro khong roi khoi the khi no nhich len */
+.sp:hover { transform: translateY(-4px); box-shadow: var(--ph-hl), var(--ph-shadow-hover); border-color: var(--ph-accent-soft-2); }
+.sp .mota { color: var(--ph-muted); }
+.gia { font-weight: 800; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.gia s { color: var(--ph-muted); }
+.tag { background: var(--ph-accent-soft-2); color: var(--ph-accent); }
+
+/* ---------- Gio hang / dat hang ---------- */
+.tbl th { color: var(--ph-muted); border-bottom: 1px solid var(--ph-line); font-weight: 700; letter-spacing: .02em; }
+.tbl td { border-bottom: 1px solid var(--ph-line); }
+.tbl tr:hover td { background: var(--ph-accent-soft); }
+.tbl td, .tbl th { transition: background-color .15s; }
+.thumb { background: var(--ph-gray-bg); border-radius: 14px; }
+.dong-loi, .dong-loi td { background: var(--ph-bad-bg); }
+.dong-loi td { border-bottom-color: var(--ph-line); }
+.loi-text { color: var(--ph-bad); }
+.tom-tat .tong { border-top-color: var(--ph-line); letter-spacing: -.01em; }
+.phieu-ok { background: var(--ph-ok-bg); color: var(--ph-ok-fg); border-radius: 12px; }
+.form-grid label { color: var(--ph-ink-2); }
+.thanh-cong .ma { background: var(--ph-accent-fill); color: var(--ph-accent-fg); box-shadow: 0 10px 24px -10px var(--ph-ring); }
+#toast { background: var(--ph-ink); color: var(--ph-bg-1); border-radius: 14px; box-shadow: var(--ph-shadow-hover); }
+#toast.loi { background: var(--ph-bad); color: #fff; }
+
+/* ---------- Trang tai khoan (frontend.css): dang ky, ho so ---------- */
+.auth { background: var(--ph-glass); border: 1px solid var(--ph-border); border-radius: 26px; box-shadow: var(--ph-hl), var(--ph-shadow-hover); color: var(--ph-ink);
+    -webkit-backdrop-filter: blur(24px) saturate(150%); backdrop-filter: blur(24px) saturate(150%); animation: ph-pop .5s var(--ph-ease) both; }
+.auth h1 { letter-spacing: -.02em; }
+.auth p { color: var(--ph-muted); }
+.auth label { color: var(--ph-ink-2); }
+.auth input { background: var(--ph-field-bg); color: var(--ph-ink); border: 1px solid var(--ph-field-border); border-radius: 12px; transition: border-color .2s, box-shadow .2s; }
+.auth input:focus { outline: none; border-color: var(--ph-accent-fill); box-shadow: 0 0 0 4px var(--ph-ring); }
+.auth button { background: var(--ph-accent-fill); color: var(--ph-accent-fg); border-radius: 12px; box-shadow: var(--ph-hl), 0 6px 16px -8px var(--ph-ring);
+    transition: transform .18s var(--ph-ease), box-shadow .2s, background-color .2s; }
+.auth button:hover { background: var(--ph-accent-hover); transform: translateY(-1px); }
+.auth button:active { transform: scale(.98); }
+.auth a { color: var(--ph-accent); font-weight: 600; }
+.auth hr { border: 0; border-top: 1px solid var(--ph-line); }
+
+/* ---------- Hieu ung vao trang (ngan, co gioi han) ---------- */
+.wrap > *:not(#toast):not(.auth), .grid > *, .layout > * { animation: ph-rise .5s var(--ph-ease) both; animation-delay: calc(var(--i, 0) * 55ms); }
+.tbl tr:nth-child(-n+12) { animation: ph-fade .4s ease both; animation-delay: calc(var(--i, 0) * 28ms + 100ms); }
+.wrap.ph-leave { opacity: 0; filter: blur(8px); transform: translateY(6px); transition: opacity .2s ease, filter .2s ease, transform .2s ease; pointer-events: none; }
+
+/* so thu tu cho stagger (toi da 10 buoc) */
+.wrap > *:nth-child(1), .grid > *:nth-child(1), .layout > *:nth-child(1), .tbl tr:nth-child(1) { --i: 0; }
+.wrap > *:nth-child(2), .grid > *:nth-child(2), .layout > *:nth-child(2), .tbl tr:nth-child(2) { --i: 1; }
+.wrap > *:nth-child(3), .grid > *:nth-child(3), .layout > *:nth-child(3), .tbl tr:nth-child(3) { --i: 2; }
+.wrap > *:nth-child(4), .grid > *:nth-child(4), .layout > *:nth-child(4), .tbl tr:nth-child(4) { --i: 3; }
+.wrap > *:nth-child(5), .grid > *:nth-child(5), .layout > *:nth-child(5), .tbl tr:nth-child(5) { --i: 4; }
+.wrap > *:nth-child(6), .grid > *:nth-child(6), .layout > *:nth-child(6), .tbl tr:nth-child(6) { --i: 5; }
+.wrap > *:nth-child(7), .grid > *:nth-child(7), .layout > *:nth-child(7), .tbl tr:nth-child(7) { --i: 6; }
+.wrap > *:nth-child(8), .grid > *:nth-child(8), .layout > *:nth-child(8), .tbl tr:nth-child(8) { --i: 7; }
+.wrap > *:nth-child(9), .grid > *:nth-child(9), .layout > *:nth-child(9), .tbl tr:nth-child(9) { --i: 8; }
+.wrap > *:nth-child(10), .grid > *:nth-child(10), .layout > *:nth-child(10), .tbl tr:nth-child(10) { --i: 9; }

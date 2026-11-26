@@ -1,4 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isErrorPage="true" %>
-<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>Lỗi 404</title></head>
-<body style="font-family:Arial;text-align:center;margin-top:90px;color:#1e293b"><h1 style="font-size:64px;margin:0">404</h1><p>Không tìm thấy trang</p>
-<a href="${pageContext.request.contextPath}/pos" style="background:#ccff00;color:#1e293b;padding:10px 18px;border-radius:10px;font-weight:700;text-decoration:none">Về màn hình bán hàng</a></body></html>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>Lỗi 404</title><meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<%@ include file="/WEB-INF/theme-head.jspf" %></head>
+<%-- note code nhu nay nhe ban: style inline cu duoc doi thanh class .ph-err (xem theme.css) de ho tro che do toi --%>
+<body class="ph-err"><h1>404</h1><p>Không tìm thấy trang</p>
+<a class="ph-err-btn" href="${ctx}/pos">Về màn hình bán hàng</a></body></html>

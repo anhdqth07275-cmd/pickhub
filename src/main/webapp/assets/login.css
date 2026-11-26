@@ -1,0 +1,113 @@
+/* =====================================================================
+   PickHub - TRANG DANG NHAP (dung chung 4 trang: admin, POS, khach, tai khoan)
+   Bo cuc + chuyen dong theo clip mau: chia doi (trai = thuong hieu, phai = the form), the form hien len,
+   khi dang nhap thanh cong hai nua tach ra hai ben roi moi gui form. Mau theo kinh mo xanh la sang/toi.
+   note code nhu nay nhe ban: file nay DOC LAP, khong can admin.css / pos.css / cua-hang.css / frontend.css.
+   ===================================================================== */
+.pl-page { margin: 0; min-height: 100vh; overflow-x: hidden; font-family: var(--ph-font); color: var(--ph-ink); font-size: 15px; line-height: 1.5; background: transparent; }
+.pl-page *, .pl-page *::before, .pl-page *::after { box-sizing: border-box; }
+.pl-shell { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); }
+
+/* ---------- nua trai: thuong hieu ---------- */
+.pl-brand { position: relative; overflow: hidden; display: grid; place-items: center; padding: 56px 48px; color: #fff;
+    background: linear-gradient(155deg, #0d4a24 0%, #136b37 55%, #15803d 100%);
+    transition: transform .42s cubic-bezier(.4, 0, 1, 1), opacity .36s ease, filter .36s ease; animation: ph-fade .6s ease both; }
+html[data-theme="dark"] .pl-brand { background: linear-gradient(155deg, #030d07 0%, #08231a 55%, #0c3a25 100%); }
+.pl-brand::before { content: ""; position: absolute; width: 38rem; height: 38rem; left: -14rem; top: -16rem; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, rgba(255, 255, 255, .2), transparent 62%); animation: pl-drift 14s ease-in-out infinite alternate; }
+html[data-theme="dark"] .pl-brand::before { background: radial-gradient(circle, rgba(74, 222, 128, .22), transparent 62%); }
+@keyframes pl-drift { from { transform: translate(0, 0); } to { transform: translate(5rem, 4rem); } }
+.pl-dots { position: absolute; left: 36px; top: 36px; width: 96px; height: 96px; opacity: .45; pointer-events: none;
+    background: radial-gradient(circle, #fff 1.6px, transparent 2px) 0 0 / 24px 24px; }
+.pl-brand-inner { position: relative; z-index: 1; width: min(420px, 100%); text-align: center; }
+.pl-brand-inner > * { animation: ph-rise .6s var(--ph-ease) both; animation-delay: calc(var(--i, 0) * 70ms + 120ms); }
+.pl-logo { font-size: clamp(2.2rem, 4.2vw, 3.1rem); font-weight: 900; letter-spacing: -.02em; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 18px; }
+.pl-logo span { background: #fff; color: #0d4a24; border-radius: 14px; padding: 0 .3em; }
+html[data-theme="dark"] .pl-logo span { background: var(--ph-accent-fill); color: var(--ph-accent-fg); }
+.pl-brand h2 { margin: 0 0 8px; font-size: 1.35rem; font-weight: 800; letter-spacing: -.01em; }
+.pl-brand p { margin: 0 auto; max-width: 34ch; color: rgba(255, 255, 255, .94); }
+.pl-sep { display: block; position: relative; width: 120px; height: 2px; margin: 28px auto; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .55), transparent); }
+.pl-sep::after { content: ""; position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: #fff; }
+.pl-feats { list-style: none; margin: 0; padding: 0; display: flex; justify-content: center; gap: 30px; }
+.pl-feats li { display: grid; justify-items: center; gap: 8px; max-width: 110px; font-size: 13px; font-weight: 600; line-height: 1.3; }
+.pl-feats svg { width: 40px; height: 40px; padding: 9px; border-radius: 13px; background: rgba(255, 255, 255, .14); border: 1px solid rgba(255, 255, 255, .28);
+    fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform .3s var(--ph-ease), background-color .2s; }
+.pl-feats li:hover svg { transform: translateY(-3px); background: rgba(255, 255, 255, .24); }
+.pl-wave { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 150px; pointer-events: none; }
+.pl-wave path { fill: rgba(255, 255, 255, .1); }
+.pl-wave path + path { fill: rgba(255, 255, 255, .07); }
+
+/* ---------- nua phai: the form ---------- */
+.pl-side { position: relative; display: grid; place-items: center; padding: 72px 24px 40px; }
+.pl-corner { position: absolute; top: 20px; right: 24px; display: flex; align-items: center; gap: 12px; }
+.pl-corner a { color: var(--ph-ink-2); font-weight: 600; font-size: 14px; padding: 6px 12px; border-radius: 99px; transition: background-color .2s, color .2s; text-decoration: none; }
+.pl-corner a:hover { background: var(--ph-accent-soft); color: var(--ph-accent); }
+.pl-card { width: min(420px, 100%); padding: 34px 32px 28px; border-radius: 28px; background: var(--ph-glass); border: 1px solid var(--ph-border);
+    box-shadow: var(--ph-hl), var(--ph-shadow-hover); -webkit-backdrop-filter: blur(24px) saturate(150%); backdrop-filter: blur(24px) saturate(150%);
+    animation: ph-pop .55s var(--ph-ease) .08s both; transition: transform .42s cubic-bezier(.4, 0, 1, 1), opacity .36s ease, filter .36s ease; }
+.pl-card > * { animation: ph-rise .5s var(--ph-ease) both; animation-delay: calc(var(--i, 0) * 50ms + 200ms); }
+.pl-title { margin: 0 0 4px; font-size: 1.6rem; font-weight: 800; letter-spacing: -.02em; text-align: center; }
+.pl-sub { margin: 0 0 22px; color: var(--ph-muted); text-align: center; font-size: 14.5px; }
+.pl-alert { margin: 0 0 14px; padding: 10px 14px; border-radius: 12px; font-size: 14px; font-weight: 600; }
+.pl-ok { background: var(--ph-ok-bg); color: var(--ph-ok-fg); }
+.pl-bad { background: var(--ph-bad-bg); color: var(--ph-bad-fg); animation: pl-shake .45s ease both; }
+@keyframes pl-shake { 0%, 100% { transform: none; } 20% { transform: translateX(-6px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(2px); } }
+
+.pl-label { display: block; margin: 0 0 6px; font-size: 13.5px; font-weight: 600; color: var(--ph-ink-2); }
+.pl-field { position: relative; margin-bottom: 16px; }
+.pl-field > svg { position: absolute; left: 14px; top: 50%; width: 18px; height: 18px; margin-top: -9px; fill: none; stroke: var(--ph-muted); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; transition: stroke .2s; }
+.pl-field:focus-within > svg { stroke: var(--ph-accent-fill); }
+.pl-field input { width: 100%; height: 46px; padding: 0 44px 0 44px; font: inherit; color: var(--ph-ink); background: var(--ph-field-bg);
+    border: 1px solid var(--ph-field-border); border-radius: 12px; transition: border-color .2s, box-shadow .2s; }
+.pl-field input::placeholder { color: var(--ph-muted); opacity: .85; }
+.pl-field input:focus { outline: none; border-color: var(--ph-accent-fill); box-shadow: 0 0 0 4px var(--ph-ring); }
+.pl-eye { position: absolute; right: 6px; top: 50%; width: 34px; height: 34px; margin-top: -17px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 9px;
+    background: transparent; color: var(--ph-muted); cursor: pointer; transition: background-color .2s, color .2s; }
+.pl-eye:hover { background: var(--ph-accent-soft); color: var(--ph-accent); }
+.pl-eye svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.pl-eye .i-off { display: none; }
+.pl-eye[aria-pressed="true"] .i-on { display: none; }
+.pl-eye[aria-pressed="true"] .i-off { display: block; }
+
+.pl-btn { position: relative; width: 100%; height: 48px; margin-top: 4px; border: 0; border-radius: 12px; font: inherit; font-weight: 700; font-size: 15.5px; cursor: pointer;
+    background: var(--ph-accent-fill); color: var(--ph-accent-fg); box-shadow: var(--ph-hl), 0 10px 22px -10px var(--ph-ring);
+    transition: transform .18s var(--ph-ease), box-shadow .2s, background-color .2s; }
+.pl-btn:hover { background: var(--ph-accent-hover); transform: translateY(-1px); box-shadow: var(--ph-hl), 0 14px 26px -10px var(--ph-ring); }
+.pl-btn:active { transform: scale(.98); }
+.pl-btn:focus-visible { outline: 2px solid var(--ph-accent-fill); outline-offset: 3px; }
+.pl-btn.is-busy { pointer-events: none; opacity: .85; }
+.pl-btn.is-busy::after { content: ""; display: inline-block; width: 15px; height: 15px; margin-left: 10px; vertical-align: -2px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: pl-spin .7s linear infinite; }
+@keyframes pl-spin { to { transform: rotate(360deg); } }
+.pl-hint { margin: 16px 0 0; text-align: center; color: var(--ph-muted); font-size: 13.5px; }
+.pl-hint a { color: var(--ph-accent); font-weight: 700; }
+.pl-hint + .pl-hint { margin-top: 8px; }
+
+/* ---------- khi dang nhap thanh cong: hai nua tach ra hai ben (xem login.js) ---------- */
+.pl-shell.pl-leaving .pl-brand { transform: translateX(-14%); opacity: 0; filter: blur(8px); }
+.pl-shell.pl-leaving .pl-card { transform: translateX(14%); opacity: 0; filter: blur(8px); }
+
+/* ---------- man hinh nho: xep doc, nua thuong hieu thu gon ---------- */
+@media (max-width: 900px) {
+    .pl-shell { grid-template-columns: 1fr; }
+    .pl-brand { padding: 30px 20px 34px; }
+    .pl-brand h2, .pl-sep, .pl-feats, .pl-wave, .pl-dots { display: none; }
+    .pl-logo { margin-bottom: 8px; font-size: 2rem; }
+    .pl-side { padding: 28px 16px 40px; align-items: start; }
+    .pl-corner { position: static; justify-content: flex-end; width: 100%; margin: -10px 0 14px; grid-column: 1; }
+    .pl-side { grid-template-columns: minmax(0, 1fr); place-items: start center; }
+}
+@media (prefers-reduced-motion: reduce) { .pl-brand::before { animation: none; } }
+
+/* so thu tu cho stagger cua the form va khoi thuong hieu */
+.pl-card > :nth-child(1), .pl-brand-inner > :nth-child(1) { --i: 0; }
+.pl-card > :nth-child(2), .pl-brand-inner > :nth-child(2) { --i: 1; }
+.pl-card > :nth-child(3), .pl-brand-inner > :nth-child(3) { --i: 2; }
+.pl-card > :nth-child(4), .pl-brand-inner > :nth-child(4) { --i: 3; }
+.pl-card > :nth-child(5), .pl-brand-inner > :nth-child(5) { --i: 4; }
+.pl-card > :nth-child(6), .pl-brand-inner > :nth-child(6) { --i: 5; }
+.pl-card > :nth-child(7), .pl-brand-inner > :nth-child(7) { --i: 6; }
+.pl-card > :nth-child(8), .pl-brand-inner > :nth-child(8) { --i: 7; }
+.pl-card > :nth-child(9), .pl-brand-inner > :nth-child(9) { --i: 8; }
+.pl-card > :nth-child(10), .pl-brand-inner > :nth-child(10) { --i: 9; }
+.pl-card > :nth-child(11), .pl-brand-inner > :nth-child(11) { --i: 10; }
+.pl-card > :nth-child(12), .pl-brand-inner > :nth-child(12) { --i: 11; }
