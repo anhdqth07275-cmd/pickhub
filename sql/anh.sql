@@ -3,7 +3,7 @@
 DELETE FROM HinhAnhSanPham;
 DBCC CHECKIDENT ('HinhAnhSanPham', RESEED, 0);
 
-
+select * from HinhAnhSanPham
 INSERT INTO HinhAnhSanPham (maSanPham, maChiTietSanPham, duongDanAnh, loaiTep, dungLuongKb, laAnhChinh, thuTuSapXep)
 VALUES
 -- ==================== SP001: Vợt Selkirk Vanguard Power Air ====================
