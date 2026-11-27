@@ -27,6 +27,12 @@
         td, th { padding: 2px 0; vertical-align: top; }
         th { text-align: left; border-bottom: 1px solid #000; }
         .p { text-align: right; white-space: nowrap; }
+        .bang-hang { table-layout: fixed; }
+        .bang-hang .c-sl { width: 9mm; text-align: center; padding: 2px 4px; }
+        .bang-hang .c-tien { width: 24mm; padding-left: 4px; }
+        .bang-hang td:first-child, .bang-hang th:first-child { word-break: break-word; padding-right: 4px; }
+        body.a5 .bang-hang .c-sl { width: 16mm; }
+        body.a5 .bang-hang .c-tien { width: 34mm; }
         .phu-dong { font-size: 11px; color: #333; }
         .tong td { font-weight: 800; font-size: 14px; padding-top: 4px; }
         .cam-on { margin-top: 10px; font-size: 12px; }
@@ -59,15 +65,15 @@
     <div>Thu ngân: <c:out value="${hoaDon.nhanVienXacNhan.hoTen}"/></div>
     <c:if test="${hoaDon.tenNguoiNhan != 'Khách lẻ'}"><div>Khách : <c:out value="${hoaDon.tenNguoiNhan}"/><c:if test="${hoaDon.soDienThoaiNguoiNhan != '0000000000'}"> - ${hoaDon.soDienThoaiNguoiNhan}</c:if></div></c:if>
     <div class="gach"></div>
-    <table>
-        <tr><th>Mặt hàng</th><th class="p">SL</th><th class="p">T.Tiền</th></tr>
+    <table class="bang-hang">
+        <tr><th>Mặt hàng</th><th class="c-sl">SL</th><th class="p c-tien">T.Tiền</th></tr>
         <c:forEach items="${dongHoaDon}" var="d">
             <tr>
                 <td><c:out value="${d.tenSanPham}"/>
                     <div class="phu-dong"><c:if test="${not empty d.moTaChiTiet}"><c:out value="${d.moTaChiTiet}"/> · </c:if>${d.maHang}</div>
                     <div class="phu-dong"><fmt:formatNumber value="${d.donGia}" pattern="#,##0"/><c:if test="${d.donGia < d.donGiaGoc}"> (gốc <fmt:formatNumber value="${d.donGiaGoc}" pattern="#,##0"/>)</c:if></div></td>
-                <td class="p">${d.soLuong}</td>
-                <td class="p"><fmt:formatNumber value="${d.donGia * d.soLuong}" pattern="#,##0"/></td>
+                <td class="c-sl">${d.soLuong}</td>
+                <td class="p c-tien"><fmt:formatNumber value="${d.donGia * d.soLuong}" pattern="#,##0"/></td>
             </tr>
         </c:forEach>
     </table>
