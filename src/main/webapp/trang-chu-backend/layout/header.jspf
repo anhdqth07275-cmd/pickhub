@@ -52,7 +52,11 @@
     <a class="nav-item ${menu == 'don-hang' ? 'active' : ''}" href="${ctx}/wp-admin/don-hang">
         <svg class="ic" viewBox="0 0 24 24"><path d="M5 7h14l-1 13H6L5 7z"/><path d="M9 7a3 3 0 016 0"/></svg>
         Đơn hàng</a>
-
+    <c:if test="${!laNhanVien}">
+        <a class="nav-item ${menu == 'bao-cao' ? 'active' : ''}" href="${ctx}/wp-admin/bao-cao">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
+            Báo cáo</a>
+    </c:if>
     <a class="nav-item ${menu == 'dat-san' ? 'active' : ''}" href="${ctx}/wp-admin/dat-san">
         <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
         Đặt sân <span class="soon-tag">Sắp ra mắt</span></a>
