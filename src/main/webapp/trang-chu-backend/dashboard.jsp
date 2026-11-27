@@ -1,5 +1,17 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="/trang-chu-backend/layout/header.jspf" %>
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+    <div class="section-title" style="margin:0">Tổng quan hoạt động</div>
+    <a class="btn lime" href="${ctx}/pos" style="display:inline-flex; align-items:center; gap:8px; font-weight:700">
+        <svg class="ic" viewBox="0 0 24 24" style="width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="M6 8h.01M10 8h.01M14 8h4M6 12h12M6 16h8"/>
+        </svg>
+        Bán hàng tại quầy (POS)
+    </a>
+</div>
+
 <%-- 4 the so tren cung (khop anh mau) --%>
 <div class="grid-4">
     <div class="card stat">

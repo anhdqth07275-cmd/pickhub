@@ -41,7 +41,16 @@
             </tr>
         </c:forEach>
         <tr><td colspan="5" class="num muted">Tạm tính</td><td class="num">${ph:tien(hd.tamTinh)}</td></tr>
-        <tr><td colspan="5" class="num muted">Giảm giá (phiếu)</td><td class="num">- ${ph:tien(hd.soTienGiam)}</td></tr>
+        <tr>
+            <td colspan="5" class="num muted">
+                Giảm giá (phiếu)
+                <c:if test="${not empty hd.phieuGiamGia}">
+                    <%-- note code nhu nay nhe ban: lay loaiGiam + giaTriGiam tu phieu de hien -20% (PHAN_TRAM) hoac -300.000đ (SO_TIEN) --%>
+                    <span class="badge">-${ph:giamGia(hd.phieuGiamGia.loaiGiam, hd.phieuGiamGia.giaTriGiam)}</span>
+                </c:if>
+            </td>
+            <td class="num">- ${ph:tien(hd.soTienGiam)}</td>
+        </tr>
         <tr><td colspan="5" class="num"><b>Tổng tiền</b></td><td class="num"><b>${ph:tien(hd.tongTien)}</b></td></tr>
     </table>
 </div>
