@@ -5,4 +5,4 @@
 
 --http://localhost:8080/wp-admin/dang-nhap
 
---http://localhost:8080/tai-khoan/dang-ky
+--http://localhost:8080/tai-khoan/dang-kye
