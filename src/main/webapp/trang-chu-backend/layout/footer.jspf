@@ -1,4 +1,13 @@
 <%-- Khung chung phan CUOI: dong the <main>, <body>, <html> --%>
 </main>
+<script>
+    // note code nhu nay nhe ban: Ctrl + K (Mac: Cmd + K) -> nhay vao o tim kiem toan cuc; preventDefault de trinh duyet khong cuop phim tat
+    document.addEventListener('keydown', function (e) {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            var o = document.getElementById('timToanCuc');
+            if (o) { e.preventDefault(); o.focus(); o.select(); }
+        }
+    });
+</script>
 </body>
 </html>

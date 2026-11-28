@@ -38,4 +38,9 @@
         <function-class>util.DinhDangUtil</function-class>
         <function-signature>java.lang.String giamGia(java.lang.String, java.lang.Object)</function-signature>
     </function>
+    <function>
+        <name>coQuyen</name>
+        <function-class>util.PhanQuyenUtil</function-class>
+        <function-signature>boolean coQuyen(java.lang.String, java.lang.String)</function-signature>
+    </function>
 </taglib>

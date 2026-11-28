@@ -33,22 +33,33 @@ public class TonKhoServlet extends BaseServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String hanhDong = docChuoi(req, "hanhDong");
+        // note code nhu nay nhe ban: chi cho quay ve 1 trong 2 trang co dinh (danh sach trang), KHONG nhan duong dan tu nguoi dung -> tranh open redirect
+        String quayLai = "dashboard".equals(docChuoi(req, "quayLai")) ? "/wp-admin" : "/wp-admin/ton-kho";
         try {
             if (hanhDong.equals("kiemKe")) {
-                // note code nhu nay nhe ban: kiem ke cho phep dat ton = 0 (kho het sach). docSo() coi so < 1 la khong hop le nen
-                // khong dung duoc o day -> dung DocSoUtil.soNguyen (nhap chu thi bao loi, de trong thi tra ve null)
-                Integer soLuong = DocSoUtil.soNguyen(docChuoi(req, "soLuong"), "Số lượng tồn");
-                if (soLuong == null) throw new NghiepVuException("Vui lòng nhập số lượng tồn");
-                service.capNhatTon(docLong(req, "id"), soLuong);       // so am -> service bao loi
-                chuyenHuong(req, resp, "/wp-admin/ton-kho", "Đã cập nhật số lượng tồn");
+                // note code nhu nay nhe ban: PhanQuyenUtil da mo quyen ghi ton-kho cho NHAN_VIEN (de nhap hang nhanh),
+                // nen kiem ke (dat lai so ton) phai chan rieng o day: chi QUAN_LY tro len duoc kiem ke
+                if (laNhanVien(req)) {
+                    chuyenHuongLoi(req, resp, quayLai, "Nhân viên không có quyền kiểm kê tồn kho");
+                    return;
+                }
+                // so ton nhap sai (chu, rong) -> -1 de bi chan o service
+                service.capNhatTon(docLong(req, "id"), docSo(req, "soLuong", -1));
+                chuyenHuong(req, resp, quayLai, "Đã cập nhật số lượng tồn");
             } else if (hanhDong.equals("nhapThem")) {
+                // nhap them hang: ca NHAN_VIEN va QUAN_LY deu duoc
                 service.nhapThem(docLong(req, "id"), docSo(req, "soLuong", 0));
-                chuyenHuong(req, resp, "/wp-admin/ton-kho", "Đã nhập thêm hàng vào kho");
+                chuyenHuong(req, resp, quayLai, "Đã nhập thêm hàng vào kho");
             } else {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
         } catch (NghiepVuException e) {
-            chuyenHuongLoi(req, resp, "/wp-admin/ton-kho", e.getMessage());
+            chuyenHuongLoi(req, resp, quayLai, e.getMessage());
         }
+    }
+
+    // note code nhu nay nhe ban: kiem tra nguoi dang dang nhap co phai NHAN_VIEN khong (vai tro luu trong session luc dang nhap)
+    private boolean laNhanVien(HttpServletRequest req) {
+        return taiKhoan(req) != null && "NHAN_VIEN".equals(taiKhoan(req).getVaiTro());
     }
 }

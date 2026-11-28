@@ -102,3 +102,10 @@
     <c:if test="${not empty flashNoiDung}">
         <div class="alert ${flashLoai}"><c:out value="${flashNoiDung}"/></div>
     </c:if>
+
+    <%-- note code nhu nay nhe ban: thanh tim kiem toan cuc, co mat o moi trang backend. Ctrl + K de focus (script o footer.jspf) --%>
+    <form class="global-search" method="get" action="${ctx}/wp-admin/tim-kiem">
+        <input id="timToanCuc" type="text" name="q" value="<c:out value='${param.q}'/>" autocomplete="off"
+               placeholder="Tìm mã đơn (#HD...), SĐT khách, tên sản phẩm...">
+        <kbd>Ctrl K</kbd>
+    </form>

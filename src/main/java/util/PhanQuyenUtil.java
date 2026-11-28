@@ -25,7 +25,8 @@ public class PhanQuyenUtil {
     // note code nhu nay nhe ban: NHAN_VIEN chi duoc thao tac ghi (POST...) o cac khu vuc nay
     private static final String[] NHAN_VIEN_DUOC_GHI = {
             "/wp-admin/don-hang",
-            "/wp-admin/tai-khoan"
+            "/wp-admin/tai-khoan",
+            "/wp-admin/ton-kho"
     };
 
     /**

@@ -1,11 +1,14 @@
 package service;
 
 import dto.CotBieuDoDTO;
+import dto.CoCauDanhMucDTO;
 import dto.OThongKeDTO;
+import dto.TangTruongDTO;
 import dto.TongQuanDTO;
 import repository.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,11 +36,32 @@ public class ThongKeService {
         TongQuanDTO tq = new TongQuanDTO();
         LocalDate homNay = LocalDate.now();
 
-        // ---- 4 the so ----
+        // ---- cac moc thoi gian ----
         LocalDateTime dauThang = homNay.withDayOfMonth(1).atStartOfDay();
-        tq.doanhThuThang = thongKeRepo.doanhThu(dauThang, dauThang.plusMonths(1));
+        LocalDateTime cuoiThang = dauThang.plusMonths(1);
+        LocalDateTime denHetHomNay = homNay.plusDays(1).atStartOfDay();
+        // note code nhu nay nhe ban: so sanh CUNG KY - thang nay moi chay N ngay thi thang truoc cung chi lay N ngay dau
+        // (neu so sanh ca thang truoc thi dau thang luon bi am). Math.min de thang truoc ngan hon (vd thang 2) khong bi tran sang thang sau
+        LocalDateTime dauThangTruoc = dauThang.minusMonths(1);
+        int soNgayThangTruoc = YearMonth.from(dauThangTruoc.toLocalDate()).lengthOfMonth();
+        LocalDateTime denCungKyTruoc = dauThangTruoc.plusDays(Math.min(homNay.getDayOfMonth(), soNgayThangTruoc));
+
+        // ---- cac the so ----
+        tq.doanhThuThang = thongKeRepo.doanhThu(dauThang, cuoiThang);
+        tq.tangTruongDoanhThu = tinhTangTruong(tq.doanhThuThang, thongKeRepo.doanhThu(dauThangTruoc, denCungKyTruoc));
+
         tq.donMoi = hoaDonRepo.demCoDieuKien("x.trangThai = 'CHO_XAC_NHAN'");
-        tq.soKhachHang = khachHangRepo.dem();
+
+        // note code nhu nay nhe ban: so khach = khach that (bo tai khoan "Khach le"); tang truong = so khach MOI cung ky
+        tq.soKhachHang = thongKeRepo.demKhachThat();
+        tq.khachMoiThang = thongKeRepo.demKhachMoi(dauThang, denHetHomNay);
+        long khachMoiKyTruoc = thongKeRepo.demKhachMoi(dauThangTruoc, denCungKyTruoc);
+        tq.tangTruongKhachHang = tinhTangTruong(BigDecimal.valueOf(tq.khachMoiThang), BigDecimal.valueOf(khachMoiKyTruoc));
+
+        // note code nhu nay nhe ban: gia tri trung binh moi don = doanh thu thang / so don HOAN_THANH (chia 0 thi tra 0)
+        tq.soDonHoanThanhThang = thongKeRepo.demDonHoanThanh(dauThang, cuoiThang);
+        tq.giaTriTrungBinhDon = tq.soDonHoanThanhThang == 0 ? BigDecimal.ZERO
+                : tq.doanhThuThang.divide(BigDecimal.valueOf(tq.soDonHoanThanhThang), 0, RoundingMode.HALF_UP);
 
         // ---- khoi "Can xu ly" ----
         tq.donChoXacNhan = tq.donMoi;
@@ -48,14 +72,43 @@ public class ThongKeService {
         // ---- bieu do ----
         tq.kieuBieuDo = "thang".equals(kieuBieuDo) ? "thang" : "ngay";
         tq.bieuDo = "thang".equals(tq.kieuBieuDo) ? bieuDoThang(homNay) : bieuDoNgay(homNay);
+        tq.coCauDanhMuc = coCauDanhMuc(dauThang, cuoiThang);
 
         // ---- cac bang ----
         // note code nhu nay nhe ban: don gan day khong lay GIO_HANG (gio hang chua phai don hang)
         tq.donGanDay = hoaDonRepo.layCoDieuKien("x.trangThai <> 'GIO_HANG'", "x.ngayDatHang desc", 5);
         tq.tonKhoThap = chiTietRepo.layCoDieuKien(TON_THAP, "x.soLuongTon asc", 5);
         tq.topBanChay = thongKeRepo.topBanChay(5);
-        tq.thongKeBang = demCacBang();
+        tq.thongKeBang = demCacBang();     // 18 bang, bam vao o nao thi mo trang quan ly cua bang do
         return tq;
+    }
+
+    // note code nhu nay nhe ban: tang truong % = (nay - truoc) / truoc * 100, lam tron 1 so le. Ky truoc = 0 thi khong chia duoc
+    private TangTruongDTO tinhTangTruong(BigDecimal nay, BigDecimal truoc) {
+        if (truoc.signum() == 0) return new TangTruongDTO("", "flat", false);
+        BigDecimal phanTram = nay.subtract(truoc).multiply(BigDecimal.valueOf(100))
+                .divide(truoc, 1, RoundingMode.HALF_UP);
+        if (phanTram.signum() == 0) return new TangTruongDTO("0%", "flat", true);
+        String so = phanTram.stripTrailingZeros().toPlainString();      // 12.5 -> "12.5", 5.0 -> "5"
+        return phanTram.signum() > 0
+                ? new TangTruongDTO("+" + so + "%", "up", true)
+                : new TangTruongDTO(so + "%", "down", true);            // so da co dau "-"
+    }
+
+    // note code nhu nay nhe ban: ty trong moi danh muc = tien danh muc / tong tien * 100
+    private List<CoCauDanhMucDTO> coCauDanhMuc(LocalDateTime tu, LocalDateTime den) {
+        List<Object[]> dong = thongKeRepo.doanhThuTheoDanhMuc(tu, den);
+        BigDecimal tong = BigDecimal.ZERO;
+        for (Object[] d : dong) tong = tong.add(new BigDecimal(d[1].toString()));
+
+        List<CoCauDanhMucDTO> ds = new ArrayList<CoCauDanhMucDTO>();
+        for (Object[] d : dong) {
+            BigDecimal tien = new BigDecimal(d[1].toString());
+            int phanTram = tong.signum() == 0 ? 0
+                    : tien.multiply(BigDecimal.valueOf(100)).divide(tong, 0, RoundingMode.HALF_UP).intValue();
+            ds.add(new CoCauDanhMucDTO(d[0].toString(), tien, phanTram));
+        }
+        return ds;
     }
 
     // 7 cot: 6 ngay truoc + hom nay
@@ -112,7 +165,7 @@ public class ThongKeService {
         return thu == DayOfWeek.SUNDAY ? "CN" : "T" + (thu.getValue() + 1);   // MONDAY=1 -> T2
     }
 
-    // note code nhu nay nhe ban: dem dong cua du 18 bang de hien o muc "Tong quan du lieu" (bam vao ra module tuong ung)
+    // note code nhu nay nhe ban: dem dong cua du 18 bang de hien o muc "Tong quan du lieu" (bam vao o nao thi ra trang quan ly cua bang do)
     private List<OThongKeDTO> demCacBang() {
         String a = "/wp-admin/";
         List<OThongKeDTO> ds = new ArrayList<OThongKeDTO>();
@@ -133,7 +186,8 @@ public class ThongKeService {
         ds.add(new OThongKeDTO("Lượt dùng phiếu", new SuDungPhieuGiamGiaRepository().dem(), a + "phieu-giam-gia/su-dung"));
         ds.add(new OThongKeDTO("Hóa đơn", hoaDonRepo.dem(), a + "don-hang"));
         ds.add(new OThongKeDTO("Hóa đơn chi tiết", new HoaDonChiTietRepository().dem(), a + "don-hang"));
-        ds.add(new OThongKeDTO("Lịch sử trạng thái", new LichSuTrangThaiHoaDonRepository().dem(), a + "don-hang"));
+        // note code nhu nay nhe ban: Lich su trang thai co trang rieng /wp-admin/lich-su-trang-thai (truoc do tro nham ve don-hang)
+        ds.add(new OThongKeDTO("Lịch sử trạng thái", new LichSuTrangThaiHoaDonRepository().dem(), a + "lich-su-trang-thai"));
         return ds;
     }
 }
